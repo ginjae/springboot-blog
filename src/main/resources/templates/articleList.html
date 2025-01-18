@@ -28,7 +28,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between">
                 <span th:text="${item.id}"></span>
-                <span th:text="|by Jaemin Kim, ${#temporals.format(item.createdAt, 'yyyy-MM-dd')}|"></span>
+                <span th:text="|By ${item.author}, ${#temporals.format(item.createdAt, 'yyyy-MM-dd')}|"></span>
             </div>
             <div class="card-body">
                 <h5 class="card-title" th:text="${item.title}"></h5>
