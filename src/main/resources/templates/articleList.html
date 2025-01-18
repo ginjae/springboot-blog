@@ -12,17 +12,17 @@
 </div>
 
 <div class="container">
-    <div class="d-flex justify-content-between">
-        <button type="button" th:onclick="|location.href='@{/new-article}'|"
-                class="btn btn-secondary btn-sm mb-3">글쓰기</button>
-        <select class="mb-3 form-select" aria-label="sort" onchange="window.location.href = value">
+    <div class="d-flex justify-content-between mb-3">
+        <div>
+            <button type="button" class="btn btn-secondary btn-sm"
+                    onclick="location.href='/new-article'">글쓰기</button>
+            <button type="button" class="btn btn-secondary btn-sm"
+                    onclick="location.href='/logout'">로그아웃</button>
+        </div>
+        <select class="form-select" aria-label="sort" onchange="location.href=value">
             <option th:selected="${#strings.equals(param.sort, 'latest')}" value="/articles">최신 순</option>
             <option th:selected="${#strings.equals(param.sort, 'oldest')}" value="/articles?sort=oldest">오래된 순</option>
         </select>
-<!--        <button th:if="${#strings.equals(param.sort, 'oldest')}" type="button" th:onclick="|location.href='@{/articles}'|"-->
-<!--                class="btn btn-secondary btn-sm mb-3">오래된 순 → 최신 순</button>-->
-<!--        <button th:if="${param.sort} == null or ${#strings.equals(param.sort, 'latest')}" type="button" th:onclick="|location.href='@{/articles?sort=oldest}'|"-->
-<!--                class="btn btn-secondary btn-sm mb-3">최신 순 → 오래된 순</button>-->
     </div>
     <div class="row-6" th:each="item : ${articles}">
         <div class="card">
