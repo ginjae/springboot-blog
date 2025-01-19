@@ -19,7 +19,7 @@ public class ArticleViewResponse {
 
     public ArticleViewResponse(Article article) {
         this.id = article.getId();
-        this.author = article.getAuthor();
+        this.author = article.getAuthorName();
         this.title = article.getTitle();
         this.content = article.getContent();
         this.createdAt = article.getCreatedAt();

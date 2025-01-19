@@ -23,20 +23,20 @@ public class User implements UserDetails {
     @Column(name = "id", updatable = false)
     private Long id;
 
-    @Column(name = "username", nullable = false, unique = true)
-    private String username;
-
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
     @Column(name = "password")
     private String password;
 
+    @Column(name = "nickname", nullable = false, unique = true)
+    private String nickname;
+
     @Builder
-    public User(String username, String email, String password) {
-        this.username = username;
+    public User(String email, String password, String nickname) {
         this.email = email;
         this.password = password;
+        this.nickname = nickname;
     }
 
     @Override
@@ -46,7 +46,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return username;
+        return email;
     }
 
     @Override

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.kimjaemin.springbootblog.domain.Article;
+import me.kimjaemin.springbootblog.domain.User;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -13,7 +14,7 @@ public class AddArticleRequest {
     private String title;
     private String content;
 
-    public Article toEntity(String author) {
+    public Article toEntity(User author) {
         return Article.builder()
                 .author(author)
                 .title(title)

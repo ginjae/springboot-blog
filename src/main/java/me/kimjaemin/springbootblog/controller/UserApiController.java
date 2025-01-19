@@ -24,7 +24,7 @@ public class UserApiController {
             userService.save(request);
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
-            model.addAttribute("username", request.getUsername());
+            model.addAttribute("nickname", request.getNickname());
             model.addAttribute("email", request.getEmail());
             return "signup";
         }

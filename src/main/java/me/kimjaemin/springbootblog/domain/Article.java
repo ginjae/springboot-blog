@@ -22,8 +22,9 @@ public class Article {
     @Column(name = "id", updatable = false)
     private Long id;
 
-    @Column(name = "author", nullable = false)
-    private String author;
+    @ManyToOne
+    @JoinColumn(name = "author", nullable = false)
+    private User author;
 
     @Column(name = "title", nullable = false)
     private String title;
@@ -40,7 +41,7 @@ public class Article {
     private LocalDateTime updatedAt;
 
     @Builder
-    public Article(String author, String title, String content) {
+    public Article(User author, String title, String content) {
         this.author = author;
         this.title = title;
         this.content = content;
@@ -49,6 +50,10 @@ public class Article {
     public void update(String title, String content) {
         this.title = title;
         this.content = content;
+    }
+
+    public String getAuthorName() {
+        return author.getNickname();
     }
 
 }

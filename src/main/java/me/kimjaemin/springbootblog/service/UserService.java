@@ -15,16 +15,16 @@ public class UserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public Long save(AddUserRequest request) {
-        if (userRepository.findByUsername(request.getUsername()).isPresent()) {
-            throw new IllegalArgumentException("Duplicated username");
+        if (userRepository.findByNickname(request.getNickname()).isPresent()) {
+            throw new IllegalArgumentException("Duplicated nickname");
         }
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new IllegalArgumentException("Duplicated email");
         }
         return userRepository.save(User.builder()
-                .username(request.getUsername())
                 .email(request.getEmail())
                 .password(bCryptPasswordEncoder.encode(request.getPassword()))
+                .nickname(request.getNickname())
                 .build()).getId();
     }
 

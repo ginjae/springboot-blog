@@ -3,6 +3,7 @@ package me.kimjaemin.springbootblog.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import me.kimjaemin.springbootblog.domain.Article;
+import me.kimjaemin.springbootblog.domain.User;
 import me.kimjaemin.springbootblog.dto.AddArticleRequest;
 import me.kimjaemin.springbootblog.dto.UpdateArticleRequest;
 import me.kimjaemin.springbootblog.repository.BlogRepository;
@@ -17,8 +18,8 @@ public class BlogService {
 
     private final BlogRepository blogRepository;
 
-    public Article save(AddArticleRequest request, String username) {
-        return blogRepository.save(request.toEntity(username));
+    public Article save(AddArticleRequest request, User author) {
+        return blogRepository.save(request.toEntity(author));
     }
 
     public List<Article> findAll() {
@@ -50,8 +51,8 @@ public class BlogService {
     }
 
     private static void authorizeArticleAuthor(Article article) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        if (!article.getAuthor().equals(username)) {
+        String nickname = ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getNickname();
+        if (!article.getAuthorName().equals(nickname)) {
             throw new IllegalArgumentException("not authorized");
         }
     }

@@ -2,15 +2,16 @@ package me.kimjaemin.springbootblog.controller;
 
 import lombok.RequiredArgsConstructor;
 import me.kimjaemin.springbootblog.domain.Article;
+import me.kimjaemin.springbootblog.domain.User;
 import me.kimjaemin.springbootblog.dto.AddArticleRequest;
 import me.kimjaemin.springbootblog.dto.ArticleResponse;
 import me.kimjaemin.springbootblog.dto.UpdateArticleRequest;
 import me.kimjaemin.springbootblog.service.BlogService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -21,8 +22,8 @@ public class BlogApiController {
 
     @PostMapping("/api/articles")
     public ResponseEntity<Article> addArticle(@RequestBody AddArticleRequest request,
-                                              Principal principal) {
-        Article savedArticle = blogService.save(request, principal.getName());
+                                              @AuthenticationPrincipal User user) {
+        Article savedArticle = blogService.save(request, user);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(savedArticle);
