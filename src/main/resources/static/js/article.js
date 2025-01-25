@@ -5,6 +5,7 @@ if (createButton) {
             title: document.getElementById("title").value,
             content: document.getElementById("content").value,
         });
+        let csrfToken = document.getElementById("csrf").value;
 
         function success() {
             alert("등록 완료되었습니다.");
@@ -16,7 +17,7 @@ if (createButton) {
             location.replace("/articles");
         }
 
-        httpRequest("POST", "/api/articles", body, success, fail);
+        httpRequest("POST", "/api/articles", csrfToken, body, success, fail);
     });
 }
 
@@ -24,6 +25,7 @@ const deleteButton = document.getElementById('delete-btn');
 if (deleteButton) {
     deleteButton.addEventListener("click", (event) => {
         let id = document.getElementById('article-id').value;
+        let csrfToken = document.getElementById("csrf").value;
 
         function success() {
             alert("삭제 완료되었습니다.");
@@ -35,7 +37,7 @@ if (deleteButton) {
             location.replace("/articles");
         }
 
-        httpRequest("DELETE", "/api/articles/" + id, null, success, fail);
+        httpRequest("DELETE", "/api/articles/" + id, csrfToken, null, success, fail);
     });
 }
 
@@ -44,6 +46,7 @@ if (modifyButton) {
     modifyButton.addEventListener("click", (event) => {
         let params = new URLSearchParams(location.search);
         let id = params.get("id");
+        let csrfToken = document.getElementById("csrf").value;
         let body = JSON.stringify({
             title: document.getElementById("title").value,
             content: document.getElementById("content").value,
@@ -59,15 +62,16 @@ if (modifyButton) {
             location.replace("/articles/" + id);
         }
 
-        httpRequest("PUT", "/api/articles/" + id, body, success, fail);
+        httpRequest("PUT", "/api/articles/" + id, csrfToken, body, success, fail);
     });
 }
 
-function httpRequest(method, url, body, success, fail) {
+function httpRequest(method, url, csrfToken, body, success, fail) {
     fetch(url, {
         method: method,
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN" : csrfToken
         },
         body: body,
     }).then((response) => {

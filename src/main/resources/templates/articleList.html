@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
 <head>
     <meta charset="UTF-8">
     <title>블로그 글 목록</title>
@@ -15,13 +15,15 @@
     <div class="d-flex justify-content-between mb-3">
         <div>
             <button type="button" class="btn btn-secondary btn-sm"
-                    onclick="location.href='/new-article'">글쓰기</button>
-            <button type="button" class="btn btn-secondary btn-sm"
+                    onclick="location.href='/write-article'">글쓰기</button>
+            <button type="button" sec:authorize="isAnonymous()" class="btn btn-secondary btn-sm"
+                    onclick="location.href='/login'">로그인</button>
+            <button type="button" sec:authorize="isAuthenticated()" class="btn btn-secondary btn-sm"
                     onclick="location.href='/logout'">로그아웃</button>
         </div>
         <select class="form-select" aria-label="sort" onchange="location.href=value">
             <option th:selected="${#strings.equals(param.sort, 'latest')}" value="/articles">최신 순</option>
-            <option th:selected="${#strings.equals(param.sort, 'oldest')}" value="/articles?sort=oldest">오래된 순</option>
+            <option th:selected="${#strings.equals(param.sort, 'oldest')}" value="/articles?sort=oldest">작성 순</option>
         </select>
     </div>
     <div class="row-6" th:each="item : ${articles}">

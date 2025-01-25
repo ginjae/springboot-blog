@@ -14,10 +14,11 @@
 <div class="container">
     <article>
         <input type="hidden" id="article-id" th:value="${article.id}">
+        <input type="hidden" id="csrf" th:value="${_csrf?.token}">
 
         <header class="mb-4">
             <input type="text" class="form-control" placeholder="제목" id="title"
-                   th:value="${article.title}">
+                   th:value="${article.title}" autofocus>
         </header>
         <section class="mb-5">
             <textarea class="form-control h-25" rows="15" placeholder="내용"

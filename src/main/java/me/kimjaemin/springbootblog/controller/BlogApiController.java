@@ -10,6 +10,7 @@ import me.kimjaemin.springbootblog.service.BlogService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,9 +22,9 @@ public class BlogApiController {
     private final BlogService blogService;
 
     @PostMapping("/api/articles")
-    public ResponseEntity<Article> addArticle(@RequestBody AddArticleRequest request,
-                                              @AuthenticationPrincipal User user) {
-        Article savedArticle = blogService.save(request, user);
+    public ResponseEntity<Article> addArticle(@RequestBody @Validated AddArticleRequest addArticleRequest,
+                      @AuthenticationPrincipal User user) {
+        Article savedArticle = blogService.save(addArticleRequest, user);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(savedArticle);
@@ -58,7 +59,7 @@ public class BlogApiController {
 
     @PutMapping("/api/articles/{id}")
     public ResponseEntity<Article> updateArticle(@PathVariable("id") Long id,
-                                                 @RequestBody UpdateArticleRequest request) {
+                                                 @RequestBody @Validated UpdateArticleRequest request) {
         Article updatedArticle = blogService.update(id, request);
 
         return ResponseEntity.ok()

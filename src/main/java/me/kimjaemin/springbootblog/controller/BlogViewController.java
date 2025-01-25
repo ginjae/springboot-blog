@@ -46,7 +46,7 @@ public class BlogViewController {
         return "article";
     }
 
-    @GetMapping("/new-article")
+    @GetMapping("/write-article")
     public String newArticle(@RequestParam(required = false) Long id, Model model) {
         if (id == null) {
             model.addAttribute("article", new ArticleViewResponse());
@@ -54,7 +54,7 @@ public class BlogViewController {
             Article article = blogService.findById(id);
             model.addAttribute("article", new ArticleViewResponse(article));
         }
-        return "newArticle";
+        return "writeArticle";
     }
 
 }

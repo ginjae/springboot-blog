@@ -1,5 +1,6 @@
 package me.kimjaemin.springbootblog.controller;
 
+import me.kimjaemin.springbootblog.dto.AddUserRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -12,7 +13,7 @@ public class UserViewController {
     }
 
     @GetMapping("/signup")
-    public String signup() {
+    public String signup(AddUserRequest addUserRequest) {
         return "signup";
     }
 

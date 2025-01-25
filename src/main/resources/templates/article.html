@@ -14,6 +14,7 @@
 <div class="container">
     <article>
         <input type="hidden" id="article-id" th:value="${article.id}">
+        <input type="hidden" id="csrf" th:value="${_csrf?.token}">
 
         <header class="mb-4">
             <h1 class="fw-bolder mb-1" th:text="${article.title}"></h1>
@@ -28,7 +29,7 @@
         <section class="mb-5">
             <p class="fs-5 mb-4" th:text="${article.content}"></p>
         </section>
-        <button type="button" th:onclick="|location.href='@{/new-article?id={articleId}(articleId=${article.id})}'|" class="btn btn-primary btn-sm">수정</button>
+        <button type="button" th:onclick="|location.href='@{/write-article?id={articleId}(articleId=${article.id})}'|" class="btn btn-primary btn-sm">수정</button>
         <button type="button" id="delete-btn" class="btn btn-secondary btn-sm">삭제</button>
     </article>
 </div>

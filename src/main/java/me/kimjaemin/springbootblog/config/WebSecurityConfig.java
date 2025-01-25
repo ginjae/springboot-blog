@@ -10,7 +10,6 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -29,25 +28,28 @@ public class WebSecurityConfig {
     public WebSecurityCustomizer configure() {
         return (web) -> web.ignoring()
                 .requestMatchers(toH2Console())
-                .requestMatchers(new AntPathRequestMatcher("/static/**"));
+                .requestMatchers(
+                        new AntPathRequestMatcher("/js/**"),
+                        new AntPathRequestMatcher("/img/**")
+                );
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
-                .authorizeRequests(auth -> auth
+                .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 new AntPathRequestMatcher("/login"),
-                                new AntPathRequestMatcher("/signup")
+                                new AntPathRequestMatcher("/signup"),
+                                new AntPathRequestMatcher("/articles")
                         ).permitAll()
                         .anyRequest().authenticated())
                 .formLogin(formLogin -> formLogin
                         .loginPage("/login")
                         .defaultSuccessUrl("/articles"))
                 .logout(logout -> logout
-                        .logoutSuccessUrl("/login")
+                        .logoutSuccessUrl("/articles")
                         .invalidateHttpSession(true))
-                .csrf(AbstractHttpConfigurer::disable)
                 .build();
     }
 

@@ -7,8 +7,10 @@ import me.kimjaemin.springbootblog.domain.User;
 import me.kimjaemin.springbootblog.dto.AddArticleRequest;
 import me.kimjaemin.springbootblog.dto.UpdateArticleRequest;
 import me.kimjaemin.springbootblog.repository.BlogRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -53,7 +55,7 @@ public class BlogService {
     private static void authorizeArticleAuthor(Article article) {
         String nickname = ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getNickname();
         if (!article.getAuthorName().equals(nickname)) {
-            throw new IllegalArgumentException("not authorized");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "not authorized");
         }
     }
 

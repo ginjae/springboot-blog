@@ -62,7 +62,7 @@ class BlogApiControllerTest {
         userRepository.deleteAll();
         user = userRepository.save(User.builder()
                 .email("user@gmail.com")
-                .password("test")
+                .password("12345678")
                 .nickname("nickname")
                 .build());
 
@@ -89,6 +89,38 @@ class BlogApiControllerTest {
         assertThat(articles.get(0).getAuthorName()).isEqualTo(user.getNickname());
         assertThat(articles.get(0).getTitle()).isEqualTo(title);
         assertThat(articles.get(0).getContent()).isEqualTo(content);
+    }
+
+    @DisplayName("addArticle: 블로그 글 추가할 때 title이 null이면 실패한다.")
+    @Test
+    public void addArticleNullValidation() throws Exception {
+        final String url = "/api/articles";
+        final String title = null;
+        final String content = "content";
+        final AddArticleRequest userRequest = new AddArticleRequest(title, content);
+        final String requestBody = objectMapper.writeValueAsString(userRequest);
+
+        ResultActions result = mockMvc.perform(post(url)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(requestBody));
+
+        result.andExpect(status().isBadRequest());
+    }
+
+    @DisplayName("addArticle: 블로그 글 추가할 때 title이 20자를 넘으면 실패한다.")
+    @Test
+    public void addArticleSizeValidation() throws Exception {
+        final String url = "/api/articles";
+        final String title = "titletitletitletitletitle";
+        final String content = "content";
+        final AddArticleRequest userRequest = new AddArticleRequest(title, content);
+        final String requestBody = objectMapper.writeValueAsString(userRequest);
+
+        ResultActions result = mockMvc.perform(post(url)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(requestBody));
+
+        result.andExpect(status().isBadRequest());
     }
 
     @DisplayName("findAllArticles: 블로그 글 목록 조회에 성공한다.")

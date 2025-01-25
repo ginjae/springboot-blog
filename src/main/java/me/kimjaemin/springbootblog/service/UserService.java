@@ -14,17 +14,15 @@ public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public Long save(AddUserRequest request) {
-        if (userRepository.findByNickname(request.getNickname()).isPresent()) {
-            throw new IllegalArgumentException("Duplicated nickname");
-        }
-        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+    public Long save(AddUserRequest addUserRequest) {
+        if (userRepository.findByEmail(addUserRequest.getEmail()).isPresent()) {
             throw new IllegalArgumentException("Duplicated email");
         }
+
         return userRepository.save(User.builder()
-                .email(request.getEmail())
-                .password(bCryptPasswordEncoder.encode(request.getPassword()))
-                .nickname(request.getNickname())
+                .email(addUserRequest.getEmail())
+                .password(bCryptPasswordEncoder.encode(addUserRequest.getPassword1()))
+                .nickname(addUserRequest.getNickname())
                 .build()).getId();
     }
 
