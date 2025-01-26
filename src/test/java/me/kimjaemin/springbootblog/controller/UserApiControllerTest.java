@@ -47,14 +47,15 @@ class UserApiControllerTest {
     @Test
     public void signup() throws Exception {
         final String url = "/signup";
-        final String email = "user@gmail.com";
+        final String email = "user1@gmail.com";
         final String password = "12345678";
-        final String nickname = "nickname";
+        final String nickname = "user1";
 
         mockMvc.perform(post(url)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("email", email)
-                .param("password", password)
+                .param("password1", password)
+                .param("password2", password)
                 .param("nickname", nickname));
 
         User user = userRepository.findByEmail(email).get();
@@ -66,9 +67,9 @@ class UserApiControllerTest {
     @Test
     public void logout() throws Exception {
         final String url = "/logout";
-        final String email = "user@gmail.com";
+        final String email = "user2@gmail.com";
         final String password = "12345678";
-        final String nickname = "nickname";
+        final String nickname = "user2";
         User user = userRepository.save(User.builder()
                 .email(email)
                 .password(bCryptPasswordEncoder.encode(password))
