@@ -57,8 +57,14 @@
     <h5 class="font-weight-bold mb-2">댓글</h5>
 
     <section th:each="comment : ${article.comments}">
-        <span class="font-weight-bold align-middle" th:text="${comment.author.nickname}"></span>
-        <span class="small align-middle text-muted" th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
+        <input type="hidden" id="comment-id" th:value="${comment.id}">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <span class="font-weight-bold" th:text="${comment.author.nickname}"></span>
+                <span class="small text-muted" th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
+            </div>
+            <button th:data-id="${comment.id}" class="comment-delete-btn btn shadow-none text-muted align-middle">×</button>
+        </div>
         <div style="white-space:pre-wrap;word-break:break-all;" th:text="${comment.content}"></div>
         <hr>
     </section>

@@ -90,6 +90,27 @@ if (commentCreateButton) {
     });
 }
 
+const commentDeleteButton = document.querySelectorAll(".comment-delete-btn");
+commentDeleteButton.forEach((button) => {
+    button.addEventListener("click", function() {
+        let id = document.getElementById("article-id").value;
+        let commentId = this.getAttribute("data-id");
+        let csrfToken = document.getElementById("csrf").value;
+
+        function success() {
+            alert("삭제 완료되었습니다.");
+            location.replace("/articles/" + id);
+        }
+
+        function fail() {
+            alert("삭제 실패했습니다.");
+            location.replace("/articles/" + id);
+        }
+
+        httpRequest("DELETE", "/api/comments/" + commentId, csrfToken, null, success);
+    });
+});
+
 function httpRequest(method, url, csrfToken, body, success) {
     fetch(url, {
         method: method,

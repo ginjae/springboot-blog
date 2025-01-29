@@ -12,7 +12,8 @@ public enum ErrorCode {
     NOT_FOUND(HttpStatus.NOT_FOUND, "E4", "존재하지 않는 엔티티입니다."),
     FORBIDDEN(HttpStatus.FORBIDDEN, "E5", "권한이 없습니다."),
 
-    ARTICLE_NOT_FOUND(HttpStatus.NOT_FOUND, "A1", "존재하지 않는 아티클입니다.");
+    ARTICLE_NOT_FOUND(HttpStatus.NOT_FOUND, "A1", "존재하지 않는 글입니다."),
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "C1", "존재하지 않는 댓글입니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

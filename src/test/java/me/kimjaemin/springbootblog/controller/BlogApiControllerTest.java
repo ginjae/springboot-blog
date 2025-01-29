@@ -365,4 +365,33 @@ class BlogApiControllerTest {
         assertThat(comments.get(0).getContent()).isEqualTo(comment);
     }
 
+    @DisplayName("deleteComment: 댓글 삭제에 성공한다.")
+    @Test
+    public void deleteComment() throws Exception {
+        final String url = "/api/comments/{id}";
+        final String title = "title";
+        final String content = "content";
+        User otherUser = userRepository.save(User.builder()
+                .email("user2@gmail.com")
+                .password("12345678")
+                .nickname("nickname2")
+                .build());
+        Article savedArticle = blogRepository.save(Article.builder()
+                .author(otherUser)
+                .title(title)
+                .content(content)
+                .build());
+        Comment savedComment = commentRepository.save(Comment.builder()
+                .article(savedArticle)
+                .author(user)
+                .content("comment")
+                .build());
+
+        mockMvc.perform(delete(url, savedComment.getId()))
+                .andExpect(status().isOk());
+
+        List<Comment> comments = commentRepository.findAll();
+        assertThat(comments.size()).isEqualTo(0);
+    }
+
 }

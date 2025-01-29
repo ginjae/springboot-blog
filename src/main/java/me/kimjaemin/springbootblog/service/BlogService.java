@@ -3,6 +3,7 @@ package me.kimjaemin.springbootblog.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import me.kimjaemin.springbootblog.config.error.exception.ArticleNotFoundException;
+import me.kimjaemin.springbootblog.config.error.exception.CommentNotFoundException;
 import me.kimjaemin.springbootblog.config.error.exception.UnauthorizedException;
 import me.kimjaemin.springbootblog.domain.Article;
 import me.kimjaemin.springbootblog.domain.Comment;
@@ -68,6 +69,21 @@ public class BlogService {
                 .orElseThrow(ArticleNotFoundException::new);
 
         return commentRepository.save(request.toEntity(article, author));
+    }
+
+    public void deleteComment(long id) {
+        Comment comment = commentRepository.findById(id)
+                .orElseThrow(CommentNotFoundException::new);
+
+        authorizeCommentAuthor(comment);
+        commentRepository.deleteById(id);
+    }
+
+    private static void authorizeCommentAuthor(Comment comment) {
+        Long id = ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
+        if (!comment.getAuthor().getId().equals(id)) {
+            throw new UnauthorizedException();
+        }
     }
 
 }

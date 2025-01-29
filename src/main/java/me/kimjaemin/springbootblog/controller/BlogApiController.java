@@ -74,4 +74,12 @@ public class BlogApiController {
                 .body(new AddCommentResponse(savedComment));
     }
 
+    @DeleteMapping("/api/comments/{id}")
+    public ResponseEntity<Void> deleteComment(@PathVariable("id") Long id) {
+        blogService.deleteComment(id);
+
+        return ResponseEntity.ok()
+                .build();
+    }
+
 }
