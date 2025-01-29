@@ -109,11 +109,11 @@ class BlogApiControllerTest {
         result.andExpect(status().isBadRequest());
     }
 
-    @DisplayName("addArticle: 블로그 글 추가할 때 title이 20자를 넘으면 실패한다.")
+    @DisplayName("addArticle: 블로그 글 추가할 때 title이 30자를 넘으면 실패한다.")
     @Test
     public void addArticleSizeValidation() throws Exception {
         final String url = "/api/articles";
-        final String title = "titletitletitletitletitle";
+        final String title = "t".repeat(31);
         final String content = "content";
         final AddArticleRequest userRequest = new AddArticleRequest(title, content);
         final String requestBody = objectMapper.writeValueAsString(userRequest);
