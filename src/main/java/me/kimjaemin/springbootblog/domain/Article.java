@@ -53,8 +53,4 @@ public class Article {
         this.content = content;
     }
 
-    public String getAuthorName() {
-        return author.getNickname();
-    }
-
 }

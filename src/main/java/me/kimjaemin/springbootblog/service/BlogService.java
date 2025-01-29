@@ -2,6 +2,8 @@ package me.kimjaemin.springbootblog.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import me.kimjaemin.springbootblog.config.error.exception.ArticleNotFoundException;
+import me.kimjaemin.springbootblog.config.error.exception.UnauthorizedException;
 import me.kimjaemin.springbootblog.domain.Article;
 import me.kimjaemin.springbootblog.domain.User;
 import me.kimjaemin.springbootblog.dto.AddArticleRequest;
@@ -30,12 +32,12 @@ public class BlogService {
 
     public Article findById(long id) {
         return blogRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Article not found: " + id));
+                .orElseThrow(ArticleNotFoundException::new);
     }
 
     public void delete(long id) {
         Article article = blogRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Article not found: " + id));
+                .orElseThrow(ArticleNotFoundException::new);
 
         authorizeArticleAuthor(article);
         blogRepository.deleteById(id);
@@ -44,7 +46,7 @@ public class BlogService {
     @Transactional
     public Article update (long id, UpdateArticleRequest request) {
         Article article = blogRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Article not found: " + id));
+                .orElseThrow(ArticleNotFoundException::new);
 
         authorizeArticleAuthor(article);
         article.update(request.getTitle(), request.getContent());
@@ -53,9 +55,9 @@ public class BlogService {
     }
 
     private static void authorizeArticleAuthor(Article article) {
-        String nickname = ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getNickname();
-        if (!article.getAuthorName().equals(nickname)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "not authorized");
+        Long id = ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
+        if (!article.getAuthor().getId().equals(id)) {
+            throw new UnauthorizedException();
         }
     }
 

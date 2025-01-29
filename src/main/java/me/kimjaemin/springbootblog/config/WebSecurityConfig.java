@@ -40,7 +40,8 @@ public class WebSecurityConfig {
                         .requestMatchers(
                                 new AntPathRequestMatcher("/login"),
                                 new AntPathRequestMatcher("/signup"),
-                                new AntPathRequestMatcher("/articles")
+                                new AntPathRequestMatcher("/articles"),
+                                new AntPathRequestMatcher("/articles/**")
                         ).permitAll()
                         .anyRequest().authenticated())
                 .formLogin(formLogin -> formLogin

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
 <head>
     <meta charset="UTF-8">
     <title>블로그 글</title>
@@ -12,7 +12,10 @@
 </div>
 
 <div class="container">
-    <article>
+    <div class="text-center">
+        <div class="alert alert-danger d-inline-block" th:if="${error} != null" th:text="${error}"></div>
+    </div>
+    <article th:if="${error} == null">
         <input type="hidden" id="article-id" th:value="${article.id}">
         <input type="hidden" id="csrf" th:value="${_csrf?.token}">
 
@@ -29,8 +32,8 @@
         <section class="mb-5">
             <p class="fs-5 mb-4" th:text="${article.content}"></p>
         </section>
-        <button type="button" th:onclick="|location.href='@{/write-article?id={articleId}(articleId=${article.id})}'|" class="btn btn-primary btn-sm">수정</button>
-        <button type="button" id="delete-btn" class="btn btn-secondary btn-sm">삭제</button>
+        <button type="button" sec:authorize="isAuthenticated()" th:onclick="|location.href='@{/write-article?id={articleId}(articleId=${article.id})}'|" class="btn btn-primary btn-sm">수정</button>
+        <button type="button" sec:authorize="isAuthenticated()" id="delete-btn" class="btn btn-secondary btn-sm">삭제</button>
     </article>
 </div>
 

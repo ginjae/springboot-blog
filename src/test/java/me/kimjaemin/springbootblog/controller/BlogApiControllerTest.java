@@ -1,6 +1,7 @@
 package me.kimjaemin.springbootblog.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import me.kimjaemin.springbootblog.config.error.ErrorCode;
 import me.kimjaemin.springbootblog.domain.Article;
 import me.kimjaemin.springbootblog.domain.User;
 import me.kimjaemin.springbootblog.dto.AddArticleRequest;
@@ -26,6 +27,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -86,7 +88,7 @@ class BlogApiControllerTest {
         result.andExpect(status().isCreated());
         List<Article> articles = blogRepository.findAll();
         assertThat(articles.size()).isEqualTo(1);
-        assertThat(articles.get(0).getAuthorName()).isEqualTo(user.getNickname());
+        assertThat(articles.get(0).getAuthor().getNickname()).isEqualTo(user.getNickname());
         assertThat(articles.get(0).getTitle()).isEqualTo(title);
         assertThat(articles.get(0).getContent()).isEqualTo(content);
     }
@@ -203,10 +205,109 @@ class BlogApiControllerTest {
                 .content(objectMapper.writeValueAsString(request)));
 
         result.andExpect(status().isOk());
-
         Article article = blogRepository.findById(savedArticle.getId()).get();
         assertThat(article.getTitle()).isEqualTo(newTitle);
         assertThat(article.getContent()).isEqualTo(newContent);
+    }
+
+    @DisplayName("findArticle: 잘못된 HTTP 메서드로의 블로그 글 조회에 실패한다.")
+    @Test
+    public void findArticleInvalidHttpMethod() throws Exception {
+        final String url = "/api/articles/{id}";
+
+        final ResultActions result = mockMvc.perform(post(url, 1));
+
+        result
+                .andDo(print())
+                .andExpect(status().isMethodNotAllowed())
+                .andExpect(jsonPath("$.message").value(ErrorCode.METHOD_NOT_ALLOWED.getMessage()));
+    }
+
+    @DisplayName("findArticle: 존재하지 않는 블로그 글 조회에 실패한다.")
+    @Test
+    public void findArticleInvalidId() throws Exception {
+        final String url = "/api/articles/{id}";
+        final long invalidId = 1;
+
+        final ResultActions result = mockMvc.perform(get(url, invalidId));
+
+        result
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value(ErrorCode.ARTICLE_NOT_FOUND.getMessage()))
+                .andExpect(jsonPath("$.code").value(ErrorCode.ARTICLE_NOT_FOUND.getCode()));
+    }
+
+    @DisplayName("deleteArticle: 존재하지 않는 블로그 글 삭제에 실패한다.")
+    @Test
+    public void deleteArticleInvalidId() throws Exception {
+        final String url = "/api/articles/{id}";
+        final long invalidId = 1;
+
+        final ResultActions result = mockMvc.perform(delete(url, invalidId));
+
+        result
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value(ErrorCode.ARTICLE_NOT_FOUND.getMessage()))
+                .andExpect(jsonPath("$.code").value(ErrorCode.ARTICLE_NOT_FOUND.getCode()));
+    }
+
+    @DisplayName("deleteArticle: 권한이 없는 블로그 글 삭제에 실패한다.")
+    @Test
+    public void deleteArticleUnauthorized() throws Exception {
+        final String url = "/api/articles/{id}";
+        final String title = "title";
+        final String content = "content";
+        User otherUser = userRepository.save(User.builder()
+                .email("user2@gmail.com")
+                .password("12345678")
+                .nickname("nickname2")
+                .build());
+        Article savedArticle = blogRepository.save(Article.builder()
+                .author(otherUser)
+                .title(title)
+                .content(content)
+                .build());
+
+        final ResultActions result = mockMvc.perform(delete(url, savedArticle.getId()));
+
+        result
+                .andDo(print())
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.message").value(ErrorCode.FORBIDDEN.getMessage()))
+                .andExpect(jsonPath("$.code").value(ErrorCode.FORBIDDEN.getCode()));
+    }
+
+    @DisplayName("updateArticle: 권한이 없는 블로그 글 수정에 실패한다.")
+    @Test
+    public void updateArticleUnauthorized() throws Exception {
+        final String url = "/api/articles/{id}";
+        final String title = "title";
+        final String content = "content";
+        User otherUser = userRepository.save(User.builder()
+                .email("user2@gmail.com")
+                .password("12345678")
+                .nickname("nickname2")
+                .build());
+        Article savedArticle = blogRepository.save(Article.builder()
+                .author(otherUser)
+                .title(title)
+                .content(content)
+                .build());
+        final String newTitle = "new title";
+        final String newContent = "new content";
+        UpdateArticleRequest request = new UpdateArticleRequest(newTitle, newContent);
+
+        ResultActions result = mockMvc.perform(put(url, savedArticle.getId())
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(objectMapper.writeValueAsString(request)));
+
+        result
+                .andDo(print())
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.message").value(ErrorCode.FORBIDDEN.getMessage()))
+                .andExpect(jsonPath("$.code").value(ErrorCode.FORBIDDEN.getCode()));
     }
 
 }

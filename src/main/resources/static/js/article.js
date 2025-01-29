@@ -17,7 +17,7 @@ if (createButton) {
             location.replace("/articles");
         }
 
-        httpRequest("POST", "/api/articles", csrfToken, body, success, fail);
+        httpRequest("POST", "/api/articles", csrfToken, body, success);
     });
 }
 
@@ -37,7 +37,7 @@ if (deleteButton) {
             location.replace("/articles");
         }
 
-        httpRequest("DELETE", "/api/articles/" + id, csrfToken, null, success, fail);
+        httpRequest("DELETE", "/api/articles/" + id, csrfToken, null, success);
     });
 }
 
@@ -62,11 +62,11 @@ if (modifyButton) {
             location.replace("/articles/" + id);
         }
 
-        httpRequest("PUT", "/api/articles/" + id, csrfToken, body, success, fail);
+        httpRequest("PUT", "/api/articles/" + id, csrfToken, body, success);
     });
 }
 
-function httpRequest(method, url, csrfToken, body, success, fail) {
+function httpRequest(method, url, csrfToken, body, success) {
     fetch(url, {
         method: method,
         headers: {
@@ -78,7 +78,9 @@ function httpRequest(method, url, csrfToken, body, success, fail) {
         if (response.status === 200 || response.status === 201) {
             return success();
         } else {
-            return fail();
+            return response.json().then((error) => {
+                alert(error.code + ": " + error.message);
+            });
         }
     });
 }

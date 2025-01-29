@@ -13,6 +13,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @RequiredArgsConstructor
 @Controller
@@ -21,7 +22,9 @@ public class UserApiController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public String signup(@Validated AddUserRequest addUserRequest, BindingResult bindingResult) {
+    public String signup(@Validated AddUserRequest addUserRequest,
+                         BindingResult bindingResult,
+                         RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             return "signup";
         }
@@ -42,6 +45,7 @@ public class UserApiController {
             bindingResult.reject("signupFailed", e.getMessage());
             return "signup";
         }
+        redirectAttributes.addFlashAttribute("msg", "회원가입이 완료되었습니다.");
         return "redirect:/login";
     }
 
@@ -49,7 +53,7 @@ public class UserApiController {
     public String logout(HttpServletRequest request, HttpServletResponse response) {
         new SecurityContextLogoutHandler().logout(request, response,
                 SecurityContextHolder.getContext().getAuthentication());
-        return "redirect:/login";
+        return "redirect:/articles";
     }
 
 }

@@ -1,6 +1,7 @@
 package me.kimjaemin.springbootblog.controller;
 
 import lombok.RequiredArgsConstructor;
+import me.kimjaemin.springbootblog.config.error.exception.ArticleNotFoundException;
 import me.kimjaemin.springbootblog.domain.Article;
 import me.kimjaemin.springbootblog.dto.ArticleListViewResponse;
 import me.kimjaemin.springbootblog.dto.ArticleViewResponse;
@@ -40,9 +41,12 @@ public class BlogViewController {
 
     @GetMapping("/articles/{id}")
     public String getArticle(@PathVariable("id") Long id, Model model) {
-        Article article = blogService.findById(id);
-        model.addAttribute("article", new ArticleViewResponse(article));
-
+         try {
+            Article article = blogService.findById(id);
+            model.addAttribute("article", new ArticleViewResponse(article));
+        } catch (ArticleNotFoundException e){
+            model.addAttribute("error", e.getErrorCode().getCode() + ": " + e.getMessage());
+        }
         return "article";
     }
 

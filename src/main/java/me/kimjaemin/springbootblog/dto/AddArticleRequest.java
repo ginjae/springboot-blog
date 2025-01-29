@@ -8,9 +8,9 @@ import lombok.NoArgsConstructor;
 import me.kimjaemin.springbootblog.domain.Article;
 import me.kimjaemin.springbootblog.domain.User;
 
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
 public class AddArticleRequest {
 
     @NotBlank(message = "제목을 입력해주세요.")
