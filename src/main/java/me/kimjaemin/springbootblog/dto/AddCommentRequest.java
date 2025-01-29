@@ -18,8 +18,8 @@ public class AddCommentRequest {
     @NotNull
     private Long articleId;
 
-    @NotBlank(message = "댓글을 입력해주세요.")
-    @Size(min = 1, max = 200, message = "댓글은 1-200자로 입력해주세요.")
+    @NotBlank(message = "댓글을 입력해 주세요.")
+    @Size(min = 1, max = 200, message = "댓글은 1-200자로 입력해 주세요.")
     private String content;
 
     public Comment toEntity(Article article, User author) {

@@ -13,11 +13,11 @@ import me.kimjaemin.springbootblog.domain.User;
 @AllArgsConstructor
 public class AddArticleRequest {
 
-    @NotBlank(message = "제목을 입력해주세요.")
-    @Size(min = 1, max = 30, message = "제목은 1-30자로 입력해주세요.")
+    @NotBlank(message = "제목을 입력해 주세요.")
+    @Size(min = 1, max = 30, message = "제목은 1-30자로 입력해 주세요.")
     private String title;
 
-    @NotBlank(message = "내용을 입력해주세요.")
+    @NotBlank(message = "내용을 입력해 주세요.")
     private String content;
 
     public Article toEntity(User author) {
