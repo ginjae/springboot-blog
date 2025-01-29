@@ -69,7 +69,7 @@
         <hr>
     </section>
 
-    <section class="my-3">
+    <section sec:authorize="isAuthenticated()" class="my-3">
         <div class="mb-2">
             <textarea class="form-control" id="content" rows="3" placeholder="댓글을 입력해 주세요." maxlength="200" style="resize:none;"></textarea>
         </div>
