@@ -125,6 +125,22 @@ class BlogApiControllerTest {
         result.andExpect(status().isBadRequest());
     }
 
+    @DisplayName("addArticle: 블로그 글 추가할 때 content가 256자를 넘어도 성공한다.")
+    @Test
+    public void addArticleContentValidation() throws Exception {
+        final String url = "/api/articles";
+        final String title = "title";
+        final String content = "c".repeat(257);
+        final AddArticleRequest userRequest = new AddArticleRequest(title, content);
+        final String requestBody = objectMapper.writeValueAsString(userRequest);
+
+        ResultActions result = mockMvc.perform(post(url)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(requestBody));
+
+        result.andExpect(status().isCreated());
+    }
+
     @DisplayName("findAllArticles: 블로그 글 목록 조회에 성공한다.")
     @Test
     public void findAllArticles() throws Exception {
@@ -166,50 +182,6 @@ class BlogApiControllerTest {
                 .andExpect(jsonPath("$.content").value(content));
     }
 
-    @DisplayName("deleteArticle: 블로그 글 삭제에 성공한다.")
-    @Test
-    public void deleteArticle() throws Exception {
-        final String url = "/api/articles/{id}";
-        final String title = "title";
-        final String content = "content";
-        Article savedArticle = blogRepository.save(Article.builder()
-                .author(user)
-                .title(title)
-                .content(content)
-                .build());
-
-        mockMvc.perform(delete(url, savedArticle.getId()))
-                .andExpect(status().isOk());
-
-        List<Article> articles = blogRepository.findAll();
-        assertThat(articles).isEmpty();
-    }
-
-    @DisplayName("updateArticle: 블로그 글 수정에 성공한다.")
-    @Test
-    public void updateArticle() throws Exception {
-        final String url = "/api/articles/{id}";
-        final String title = "title";
-        final String content = "content";
-        Article savedArticle = blogRepository.save(Article.builder()
-                .author(user)
-                .title(title)
-                .content(content)
-                .build());
-        final String newTitle = "new title";
-        final String newContent = "new content";
-        UpdateArticleRequest request = new UpdateArticleRequest(newTitle, newContent);
-
-        ResultActions result = mockMvc.perform(put(url, savedArticle.getId())
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(objectMapper.writeValueAsString(request)));
-
-        result.andExpect(status().isOk());
-        Article article = blogRepository.findById(savedArticle.getId()).get();
-        assertThat(article.getTitle()).isEqualTo(newTitle);
-        assertThat(article.getContent()).isEqualTo(newContent);
-    }
-
     @DisplayName("findArticle: 잘못된 HTTP 메서드로의 블로그 글 조회에 실패한다.")
     @Test
     public void findArticleInvalidHttpMethod() throws Exception {
@@ -236,6 +208,25 @@ class BlogApiControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value(ErrorCode.ARTICLE_NOT_FOUND.getMessage()))
                 .andExpect(jsonPath("$.code").value(ErrorCode.ARTICLE_NOT_FOUND.getCode()));
+    }
+
+    @DisplayName("deleteArticle: 블로그 글 삭제에 성공한다.")
+    @Test
+    public void deleteArticle() throws Exception {
+        final String url = "/api/articles/{id}";
+        final String title = "title";
+        final String content = "content";
+        Article savedArticle = blogRepository.save(Article.builder()
+                .author(user)
+                .title(title)
+                .content(content)
+                .build());
+
+        mockMvc.perform(delete(url, savedArticle.getId()))
+                .andExpect(status().isOk());
+
+        List<Article> articles = blogRepository.findAll();
+        assertThat(articles).isEmpty();
     }
 
     @DisplayName("deleteArticle: 존재하지 않는 블로그 글 삭제에 실패한다.")
@@ -277,6 +268,31 @@ class BlogApiControllerTest {
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.message").value(ErrorCode.FORBIDDEN.getMessage()))
                 .andExpect(jsonPath("$.code").value(ErrorCode.FORBIDDEN.getCode()));
+    }
+
+    @DisplayName("updateArticle: 블로그 글 수정에 성공한다.")
+    @Test
+    public void updateArticle() throws Exception {
+        final String url = "/api/articles/{id}";
+        final String title = "title";
+        final String content = "content";
+        Article savedArticle = blogRepository.save(Article.builder()
+                .author(user)
+                .title(title)
+                .content(content)
+                .build());
+        final String newTitle = "new title";
+        final String newContent = "new content";
+        UpdateArticleRequest request = new UpdateArticleRequest(newTitle, newContent);
+
+        ResultActions result = mockMvc.perform(put(url, savedArticle.getId())
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(objectMapper.writeValueAsString(request)));
+
+        result.andExpect(status().isOk());
+        Article article = blogRepository.findById(savedArticle.getId()).get();
+        assertThat(article.getTitle()).isEqualTo(newTitle);
+        assertThat(article.getContent()).isEqualTo(newContent);
     }
 
     @DisplayName("updateArticle: 권한이 없는 블로그 글 수정에 실패한다.")

@@ -14,7 +14,7 @@ import me.kimjaemin.springbootblog.domain.User;
 public class AddArticleRequest {
 
     @NotBlank(message = "제목을 입력해주세요.")
-    @Size(min = 1, max = 20, message = "제목은 1-20자로 입력해주세요.")
+    @Size(min = 1, max = 30, message = "제목은 1-20자로 입력해주세요.")
     private String title;
 
     @NotBlank(message = "내용을 입력해주세요.")

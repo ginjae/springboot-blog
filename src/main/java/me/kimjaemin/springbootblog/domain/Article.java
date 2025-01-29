@@ -27,10 +27,10 @@ public class Article {
     @JoinColumn(name = "author", nullable = false)
     private User author;
 
-    @Column(name = "title", nullable = false)
+    @Column(name = "title", length = 30, nullable = false)
     private String title;
 
-    @Column(name = "content", nullable = false)
+    @Column(name = "content", columnDefinition = "TEXT", nullable = false)
     private String content;
 
     @CreatedDate
