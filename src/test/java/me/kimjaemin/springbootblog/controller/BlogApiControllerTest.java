@@ -3,10 +3,13 @@ package me.kimjaemin.springbootblog.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import me.kimjaemin.springbootblog.config.error.ErrorCode;
 import me.kimjaemin.springbootblog.domain.Article;
+import me.kimjaemin.springbootblog.domain.Comment;
 import me.kimjaemin.springbootblog.domain.User;
 import me.kimjaemin.springbootblog.dto.AddArticleRequest;
+import me.kimjaemin.springbootblog.dto.AddCommentRequest;
 import me.kimjaemin.springbootblog.dto.UpdateArticleRequest;
 import me.kimjaemin.springbootblog.repository.BlogRepository;
+import me.kimjaemin.springbootblog.repository.CommentRepository;
 import me.kimjaemin.springbootblog.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -50,6 +53,9 @@ class BlogApiControllerTest {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    CommentRepository commentRepository;
+
     User user;
 
     @BeforeEach
@@ -57,6 +63,7 @@ class BlogApiControllerTest {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
                 .build();
         blogRepository.deleteAll();
+        commentRepository.deleteAll();
     }
 
     @BeforeEach
@@ -324,6 +331,38 @@ class BlogApiControllerTest {
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.message").value(ErrorCode.FORBIDDEN.getMessage()))
                 .andExpect(jsonPath("$.code").value(ErrorCode.FORBIDDEN.getCode()));
+    }
+
+    @DisplayName("addComment: 다른 사람이 쓴 글에 댓글 추가에 성공한다.")
+    @Test
+    public void addComment() throws Exception {
+        final String url = "/api/comments";
+        final String title = "title";
+        final String content = "content";
+        User otherUser = userRepository.save(User.builder()
+                .email("user2@gmail.com")
+                .password("12345678")
+                .nickname("nickname2")
+                .build());
+        Article savedArticle = blogRepository.save(Article.builder()
+                .author(otherUser)
+                .title(title)
+                .content(content)
+                .build());
+        final Long articleId = savedArticle.getId();
+        final String comment = "comment";
+        final AddCommentRequest request = new AddCommentRequest(articleId, comment);
+        final String requestBody = objectMapper.writeValueAsString(request);
+
+        ResultActions result = mockMvc.perform(post(url)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(requestBody));
+
+        result.andExpect(status().isCreated());
+        List<Comment> comments = commentRepository.findAll();
+        assertThat(comments.size()).isEqualTo(1);
+        assertThat(comments.get(0).getArticle().getId()).isEqualTo(articleId);
+        assertThat(comments.get(0).getContent()).isEqualTo(comment);
     }
 
 }

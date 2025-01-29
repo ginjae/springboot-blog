@@ -1,4 +1,4 @@
-const createButton = document.getElementById('create-btn');
+const createButton = document.getElementById("create-btn");
 if (createButton) {
     createButton.addEventListener("click", (event) => {
         let body = JSON.stringify({
@@ -21,10 +21,10 @@ if (createButton) {
     });
 }
 
-const deleteButton = document.getElementById('delete-btn');
+const deleteButton = document.getElementById("delete-btn");
 if (deleteButton) {
     deleteButton.addEventListener("click", (event) => {
-        let id = document.getElementById('article-id').value;
+        let id = document.getElementById("article-id").value;
         let csrfToken = document.getElementById("csrf").value;
 
         function success() {
@@ -41,7 +41,7 @@ if (deleteButton) {
     });
 }
 
-const modifyButton = document.getElementById('modify-btn');
+const modifyButton = document.getElementById("modify-btn");
 if (modifyButton) {
     modifyButton.addEventListener("click", (event) => {
         let params = new URLSearchParams(location.search);
@@ -63,6 +63,30 @@ if (modifyButton) {
         }
 
         httpRequest("PUT", "/api/articles/" + id, csrfToken, body, success);
+    });
+}
+
+const commentCreateButton = document.getElementById("comment-create-btn");
+if (commentCreateButton) {
+    commentCreateButton.addEventListener("click", (event) => {
+        let id = document.getElementById("article-id").value;
+        let csrfToken = document.getElementById("csrf").value;
+        let body = JSON.stringify({
+            articleId: id,
+            content: document.getElementById("content").value,
+        });
+
+        function success() {
+            alert("등록 완료되었습니다.");
+            location.replace("/articles/" + id);
+        }
+
+        function fail() {
+            alert("등록 실패했습니다.");
+            location.replace("/articles" + id);
+        }
+
+        httpRequest("POST", "/api/comments", csrfToken, body, success);
     });
 }
 

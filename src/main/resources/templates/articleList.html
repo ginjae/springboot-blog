@@ -12,13 +12,23 @@
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
         }
+        .vr {
+            display: inline-block;
+            align-self: stretch;
+            width: 1px;
+            min-height: 1em;
+            background-color: currentColor;
+            opacity:.25;
+        }
     </style>
 </head>
 <body>
-<div class="p-5 mb-5 text-center bg-light">
-    <h1 class="mb-3"><a href="/articles">Jaemin Kim</a></h1>
-    <h4 class="mb-3">블로그에 오신 것을 환영합니다.</h4>
-</div>
+<a href="/articles" style="text-decoration:none;">
+    <div class="p-5 mb-5 text-center bg-light shadow">
+        <img src="/img/j.png" class="mb-3">
+        <h4 class="mb-3 text-dark">블로그에 오신 것을 환영합니다.</h4>
+    </div>
+</a>
 
 <div class="container">
     <div class="d-flex justify-content-between mb-3">
@@ -35,16 +45,23 @@
             <option th:selected="${#strings.equals(param.sort, 'oldest')}" value="/articles?sort=oldest">작성 순</option>
         </select>
     </div>
-    <div class="row-6" th:each="item : ${articles}">
-        <div class="card">
-            <div class="card-header d-flex justify-content-between">
+    <div th:each="item : ${articles}">
+        <div class="card shadow">
+            <div class="card-header d-flex justify-content-between align-items-center">
                 <span th:text="${item.id}"></span>
-                <span th:text="|By ${item.author}, ${#temporals.format(item.createdAt, 'yyyy-MM-dd')}|"></span>
+                <div class="d-flex align-items-center">
+                    <span class="text-muted" th:text="${item.author}"></span>
+                    <span class="vr mx-2"></span>
+                    <span class="text-muted" th:text="${#temporals.format(item.createdAt, 'yyyy-MM-dd')}"></span>
+                </div>
             </div>
             <div class="card-body">
-                <h5 class="card-title" th:text="${item.title}"></h5>
+                <h5 class="card-title font-weight-bold" th:text="${item.title}"></h5>
                 <p class="card-text" style="white-space:wrap;word-break:break-all;" th:text="${item.content}"></p>
-                <a th:href="@{/articles/{id}(id=${item.id})}" class="btn btn-primary stretched-link float-right">자세히</a>
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="text-muted" th:text="|💬(${#lists.size(item.comments)})|"></span>
+                    <a th:href="@{/articles/{id}(id=${item.id})}" class="btn btn-primary btn-sm stretched-link float-right">자세히</a>
+                </div>
             </div>
         </div>
         <br>

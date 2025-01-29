@@ -2,10 +2,9 @@ package me.kimjaemin.springbootblog.controller;
 
 import lombok.RequiredArgsConstructor;
 import me.kimjaemin.springbootblog.domain.Article;
+import me.kimjaemin.springbootblog.domain.Comment;
 import me.kimjaemin.springbootblog.domain.User;
-import me.kimjaemin.springbootblog.dto.AddArticleRequest;
-import me.kimjaemin.springbootblog.dto.ArticleResponse;
-import me.kimjaemin.springbootblog.dto.UpdateArticleRequest;
+import me.kimjaemin.springbootblog.dto.*;
 import me.kimjaemin.springbootblog.service.BlogService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,12 +21,12 @@ public class BlogApiController {
     private final BlogService blogService;
 
     @PostMapping("/api/articles")
-    public ResponseEntity<Article> addArticle(@RequestBody @Validated AddArticleRequest addArticleRequest,
+    public ResponseEntity<ArticleResponse> addArticle(@RequestBody @Validated AddArticleRequest addArticleRequest,
                       @AuthenticationPrincipal User user) {
         Article savedArticle = blogService.save(addArticleRequest, user);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(savedArticle);
+                .body(new ArticleResponse(savedArticle));
     }
 
     @GetMapping("/api/articles")
@@ -58,12 +57,21 @@ public class BlogApiController {
     }
 
     @PutMapping("/api/articles/{id}")
-    public ResponseEntity<Article> updateArticle(@PathVariable("id") Long id,
+    public ResponseEntity<ArticleResponse> updateArticle(@PathVariable("id") Long id,
                                                  @RequestBody @Validated UpdateArticleRequest request) {
         Article updatedArticle = blogService.update(id, request);
 
         return ResponseEntity.ok()
-                .body(updatedArticle);
+                .body(new ArticleResponse(updatedArticle));
+    }
+
+    @PostMapping("/api/comments")
+    public ResponseEntity<AddCommentResponse> addComment(@RequestBody @Validated AddCommentRequest addCommentRequest,
+                                                         @AuthenticationPrincipal User user) {
+        Comment savedComment = blogService.addComment(addCommentRequest, user);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new AddCommentResponse(savedComment));
     }
 
 }
