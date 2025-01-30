@@ -20,18 +20,21 @@
 
         <div class="card shadow">
             <div class="card-body p-5">
+                <h3 class="card-title font-weight-bold mb-4">글 작성</h3>
                 <header class="mb-2">
                     <input type="text" class="form-control" placeholder="제목을 입력해 주세요." id="title"
                            th:value="${article.title}" maxlength="30" autofocus>
                 </header>
-                <section class="mb-2">
-                    <textarea class="form-control h-25" rows="15" placeholder="내용을 입력해 주세요."
+                <section>
+                    <textarea class="form-control w-100" rows="15" placeholder="내용을 입력해 주세요."
                               id="content" th:text="${article.content}" style="resize:none;"></textarea>
+                    <div class="d-flex justify-content-end mt-2">
+                        <button th:if="${article.id} != null" type="button" id="modify-btn"
+                                class="btn btn-primary btn-block">수정</button>
+                        <button th:if="${article.id} == null" type="button" id="create-btn"
+                                class="btn btn-primary btn-block">등록</button>
+                    </div>
                 </section>
-                <button th:if="${article.id} != null" type="button" id="modify-btn"
-                        class="btn btn-primary btn-sm float-right">수정</button>
-                <button th:if="${article.id} == null" type="button" id="create-btn"
-                        class="btn btn-primary btn-sm float-right">등록</button>
             </div>
         </div>
     </article>

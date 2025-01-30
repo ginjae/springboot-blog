@@ -5,13 +5,9 @@
     <title>블로그 글</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
     <style>
-        .vr {
-            display: inline-block;
-            align-self: stretch;
-            width: 1px;
-            min-height: 1em;
-            background-color: currentColor;
-            opacity:.25;
+        span::after {
+            content: " ";
+            margin: 0 6px;
         }
     </style>
 </head>
@@ -34,12 +30,8 @@
         <header class="mb-4">
             <h1 class="font-weight-bold mb-0" style="white-space:pre-wrap;word-break:break-all;" th:text="${article.title}"></h1>
             <div class="d-flex align-items-center">
-                <span class="text-muted" th:text="|작성자: ${article.author}|"></span>
-                <span class="vr mx-2"></span>
-                <span class="text-muted" th:text="|작성 시각: ${#temporals.format(article.createdAt, 'yyyy-MM-dd HH:mm:ss')}|"></span>
-                <span class="vr mx-2" th:if="${article.createdAt} != ${article.updatedAt}"></span>
-                <span class="text-muted" th:if="${article.createdAt} != ${article.updatedAt}"
-                      th:text="|최근 수정 시각: ${#temporals.format(article.updatedAt, 'yyyy-MM-dd HH:mm:ss')}|"></span>
+                <span class="text-muted" th:text="${article.author}"></span>
+                <span class="text-muted" th:text="${#temporals.format(article.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
             </div>
         </header>
         <section class="mb-4">
@@ -54,14 +46,14 @@
     </article>
 
     <hr>
-    <h5 class="font-weight-bold mb-2">댓글</h5>
+    <h4 class="font-weight-bold mb-2">댓글</h4>
 
     <section th:each="comment : ${article.comments}">
         <input type="hidden" id="comment-id" th:value="${comment.id}">
         <div class="d-flex justify-content-between align-items-center">
             <div>
                 <span class="font-weight-bold" th:text="${comment.author.nickname}"></span>
-                <span class="small text-muted" th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></span>
+                <span class="small text-muted" th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
             </div>
             <button sec:authorize="isAuthenticated()" th:data-id="${comment.id}" class="comment-delete-btn btn shadow-none text-muted align-middle">×</button>
         </div>
@@ -70,10 +62,12 @@
     </section>
 
     <section sec:authorize="isAuthenticated()" class="my-3">
-        <div class="mb-2">
-            <textarea class="form-control" id="content" rows="3" placeholder="댓글을 입력해 주세요." maxlength="200" style="resize:none;"></textarea>
+        <div class="border rounded p-2">
+            <textarea class="w-100" id="content" rows="3" placeholder="댓글을 입력해 주세요." maxlength="200" style="resize:none;border:0;outline:0;"></textarea>
+            <div class="d-flex justify-content-end">
+                <button type="button" id="comment-create-btn" class="btn btn-primary btn-sm" style="">등록</button>
+            </div>
         </div>
-        <button type="button" id="comment-create-btn" class="btn btn-primary btn-sm float-right">등록</button>
     </section>
 
 </div>
