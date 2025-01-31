@@ -6,6 +6,10 @@ import me.kimjaemin.springbootblog.domain.Comment;
 import me.kimjaemin.springbootblog.domain.User;
 import me.kimjaemin.springbootblog.dto.*;
 import me.kimjaemin.springbootblog.service.BlogService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -30,14 +34,12 @@ public class BlogApiController {
     }
 
     @GetMapping("/api/articles")
-    public ResponseEntity<List<ArticleResponse>> findAllArticles() {
-        List<ArticleResponse> articles = blogService.findAll()
-                .stream()
-                .map(ArticleResponse::new)
-                .toList();
+    public ResponseEntity<Page<ArticleResponse>> findArticles(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<ArticleResponse> page = blogService.getPage(pageable)
+                .map(ArticleResponse::new);
 
         return ResponseEntity.ok()
-                .body(articles);
+                .body(page);
     }
 
     @GetMapping("/api/articles/{id}")

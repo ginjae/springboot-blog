@@ -8,7 +8,7 @@ import me.kimjaemin.springbootblog.domain.User;
 import me.kimjaemin.springbootblog.dto.AddArticleRequest;
 import me.kimjaemin.springbootblog.dto.AddCommentRequest;
 import me.kimjaemin.springbootblog.dto.UpdateArticleRequest;
-import me.kimjaemin.springbootblog.repository.BlogRepository;
+import me.kimjaemin.springbootblog.repository.ArticleRepository;
 import me.kimjaemin.springbootblog.repository.CommentRepository;
 import me.kimjaemin.springbootblog.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,7 +48,7 @@ class BlogApiControllerTest {
     private WebApplicationContext context;
 
     @Autowired
-    BlogRepository blogRepository;
+    ArticleRepository articleRepository;
 
     @Autowired
     UserRepository userRepository;
@@ -62,7 +62,7 @@ class BlogApiControllerTest {
     public void mockMvcSetup() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
                 .build();
-        blogRepository.deleteAll();
+        articleRepository.deleteAll();
         commentRepository.deleteAll();
     }
 
@@ -93,7 +93,7 @@ class BlogApiControllerTest {
                 .content(requestBody));
 
         result.andExpect(status().isCreated());
-        List<Article> articles = blogRepository.findAll();
+        List<Article> articles = articleRepository.findAll();
         assertThat(articles.size()).isEqualTo(1);
         assertThat(articles.get(0).getAuthor().getNickname()).isEqualTo(user.getNickname());
         assertThat(articles.get(0).getTitle()).isEqualTo(title);
@@ -148,13 +148,13 @@ class BlogApiControllerTest {
         result.andExpect(status().isCreated());
     }
 
-    @DisplayName("findAllArticles: 블로그 글 목록 조회에 성공한다.")
+    @DisplayName("findArticles: 블로그 글 목록 조회에 성공한다.")
     @Test
-    public void findAllArticles() throws Exception {
+    public void findArticles() throws Exception {
         final String url = "/api/articles";
         final String title = "title";
         final String content = "content";
-        blogRepository.save(Article.builder()
+        articleRepository.save(Article.builder()
                 .author(user)
                 .title(title)
                 .content(content)
@@ -165,8 +165,8 @@ class BlogApiControllerTest {
 
         result
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].content").value(content))
-                .andExpect(jsonPath("$[0].title").value(title));
+                .andExpect(jsonPath("$.content[0].title").value(title))
+                .andExpect(jsonPath("$.content[0].content").value(content));
     }
 
     @DisplayName("findArticle: 블로그 글 조회에 성공한다.")
@@ -175,7 +175,7 @@ class BlogApiControllerTest {
         final String url = "/api/articles/{id}";
         final String title = "title";
         final String content = "content";
-        Article savedArticle = blogRepository.save(Article.builder()
+        Article savedArticle = articleRepository.save(Article.builder()
                 .author(user)
                 .title(title)
                 .content(content)
@@ -223,7 +223,7 @@ class BlogApiControllerTest {
         final String url = "/api/articles/{id}";
         final String title = "title";
         final String content = "content";
-        Article savedArticle = blogRepository.save(Article.builder()
+        Article savedArticle = articleRepository.save(Article.builder()
                 .author(user)
                 .title(title)
                 .content(content)
@@ -232,7 +232,7 @@ class BlogApiControllerTest {
         mockMvc.perform(delete(url, savedArticle.getId()))
                 .andExpect(status().isOk());
 
-        List<Article> articles = blogRepository.findAll();
+        List<Article> articles = articleRepository.findAll();
         assertThat(articles).isEmpty();
     }
 
@@ -262,7 +262,7 @@ class BlogApiControllerTest {
                 .password("12345678")
                 .nickname("nickname2")
                 .build());
-        Article savedArticle = blogRepository.save(Article.builder()
+        Article savedArticle = articleRepository.save(Article.builder()
                 .author(otherUser)
                 .title(title)
                 .content(content)
@@ -283,7 +283,7 @@ class BlogApiControllerTest {
         final String url = "/api/articles/{id}";
         final String title = "title";
         final String content = "content";
-        Article savedArticle = blogRepository.save(Article.builder()
+        Article savedArticle = articleRepository.save(Article.builder()
                 .author(user)
                 .title(title)
                 .content(content)
@@ -297,7 +297,7 @@ class BlogApiControllerTest {
                 .content(objectMapper.writeValueAsString(request)));
 
         result.andExpect(status().isOk());
-        Article article = blogRepository.findById(savedArticle.getId()).get();
+        Article article = articleRepository.findById(savedArticle.getId()).get();
         assertThat(article.getTitle()).isEqualTo(newTitle);
         assertThat(article.getContent()).isEqualTo(newContent);
     }
@@ -313,7 +313,7 @@ class BlogApiControllerTest {
                 .password("12345678")
                 .nickname("nickname2")
                 .build());
-        Article savedArticle = blogRepository.save(Article.builder()
+        Article savedArticle = articleRepository.save(Article.builder()
                 .author(otherUser)
                 .title(title)
                 .content(content)
@@ -344,7 +344,7 @@ class BlogApiControllerTest {
                 .password("12345678")
                 .nickname("nickname2")
                 .build());
-        Article savedArticle = blogRepository.save(Article.builder()
+        Article savedArticle = articleRepository.save(Article.builder()
                 .author(otherUser)
                 .title(title)
                 .content(content)
@@ -376,7 +376,7 @@ class BlogApiControllerTest {
                 .password("12345678")
                 .nickname("nickname2")
                 .build());
-        Article savedArticle = blogRepository.save(Article.builder()
+        Article savedArticle = articleRepository.save(Article.builder()
                 .author(otherUser)
                 .title(title)
                 .content(content)

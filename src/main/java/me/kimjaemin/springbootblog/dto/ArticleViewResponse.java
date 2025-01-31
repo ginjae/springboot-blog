@@ -17,7 +17,6 @@ public class ArticleViewResponse {
     private String title;
     private String content;
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
     private List<Comment> comments;
 
     public ArticleViewResponse(Article article) {
@@ -26,7 +25,6 @@ public class ArticleViewResponse {
         this.title = article.getTitle();
         this.content = article.getContent();
         this.createdAt = article.getCreatedAt();
-        this.updatedAt = article.getUpdatedAt();
         this.comments = article.getComments();
     }
 

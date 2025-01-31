@@ -1,3 +1,7 @@
 spring:
   application:
     name: springboot-blog
+  data:
+    web:
+      pageable:
+        one-indexed-parameters: true

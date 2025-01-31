@@ -11,8 +11,12 @@ import me.kimjaemin.springbootblog.domain.User;
 import me.kimjaemin.springbootblog.dto.AddArticleRequest;
 import me.kimjaemin.springbootblog.dto.AddCommentRequest;
 import me.kimjaemin.springbootblog.dto.UpdateArticleRequest;
-import me.kimjaemin.springbootblog.repository.BlogRepository;
+import me.kimjaemin.springbootblog.repository.ArticleRepository;
 import me.kimjaemin.springbootblog.repository.CommentRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -22,33 +26,37 @@ import java.util.List;
 @Service
 public class BlogService {
 
-    private final BlogRepository blogRepository;
+    private final ArticleRepository articleRepository;
     private final CommentRepository commentRepository;
 
     public Article save(AddArticleRequest request, User author) {
-        return blogRepository.save(request.toEntity(author));
+        return articleRepository.save(request.toEntity(author));
     }
 
     public List<Article> findAll() {
-        return blogRepository.findAll();
+        return articleRepository.findAll();
+    }
+
+    public Page<Article> getPage(Pageable pageable) {
+        return articleRepository.findAll(pageable);
     }
 
     public Article findById(long id) {
-        return blogRepository.findById(id)
+        return articleRepository.findById(id)
                 .orElseThrow(ArticleNotFoundException::new);
     }
 
     public void delete(long id) {
-        Article article = blogRepository.findById(id)
+        Article article = articleRepository.findById(id)
                 .orElseThrow(ArticleNotFoundException::new);
 
         authorizeArticleAuthor(article);
-        blogRepository.deleteById(id);
+        articleRepository.deleteById(id);
     }
 
     @Transactional
     public Article update (long id, UpdateArticleRequest request) {
-        Article article = blogRepository.findById(id)
+        Article article = articleRepository.findById(id)
                 .orElseThrow(ArticleNotFoundException::new);
 
         authorizeArticleAuthor(article);
@@ -65,7 +73,7 @@ public class BlogService {
     }
 
     public Comment addComment(AddCommentRequest request, User author) {
-        Article article = blogRepository.findById(request.getArticleId())
+        Article article = articleRepository.findById(request.getArticleId())
                 .orElseThrow(ArticleNotFoundException::new);
 
         return commentRepository.save(request.toEntity(article, author));

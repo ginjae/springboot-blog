@@ -47,6 +47,8 @@ public class WebSecurityConfig {
                             String prevPage = (String) request.getSession().getAttribute("prevPage");
                             if (prevPage != null) {
                                 response.sendRedirect(prevPage);
+                            } else {
+                                response.sendRedirect("/articles");
                             }
                         }))
 //                        .defaultSuccessUrl("/articles", false))

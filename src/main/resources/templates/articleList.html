@@ -28,7 +28,7 @@
 <div class="p-3 mb-5 text-center bg-light shadow">
     <div class="container d-flex justify-content-between align-items-center">
         <a href="/articles" style="text-decoration:none;">
-            <img src="/img/j.png" alt="j">
+            <img src="/img/j.png" alt="J">
             <span class="h4 text-dark align-middle">'s 블로그</span>
         </a>
         <button type="button" sec:authorize="isAnonymous()" class="btn btn-primary m-1 rounded-pill"
@@ -45,28 +45,55 @@
     <div class="d-flex justify-content-between mb-3">
         <label>
             <select class="form-control w-auto rounded-pill" onchange="location.href=value">
-                <option th:selected="${#strings.equals(param.sort, 'latest')}" value="/articles">최신 순</option>
-                <option th:selected="${#strings.equals(param.sort, 'oldest')}" value="/articles?sort=oldest">작성 순</option>
+                <option th:selected="${#strings.equals(param.sort, 'id,desc')}" value="/articles">최신 순</option>
+                <option th:selected="${#strings.equals(param.sort, 'id,asc')}" value="/articles?sort=id,asc">작성 순</option>
             </select>
         </label>
         <div>
         </div>
     </div>
-    <div th:each="item : ${articles}">
-        <div class="card shadow" style="cursor:pointer;" th:onclick="|location.href='@{/articles/{articleId}(articleId=${item.id})}'|">
+
+    <div th:each="article : ${page}">
+        <div class="card shadow" style="cursor:pointer;" th:onclick="|location.href='@{/articles/{articleId}(articleId=${article.id})}'|">
             <div class="card-body">
-                <h5 class="card-title font-weight-bold" th:text="${item.title}"></h5>
-                <p class="card-text" style="white-space:wrap;word-break:break-all;" th:text="${item.content}"></p>
+                <h5 class="card-title font-weight-bold" th:text="${article.title}"></h5>
+                <p class="card-text" style="white-space:wrap;word-break:break-all;" th:text="${article.content}"></p>
                 <hr class="mt-4">
                 <div class="d-flex align-items-center">
-                    <span class="text-muted" th:text="${item.author}"></span>
-                    <span class="text-muted" th:text="${#temporals.format(item.createdAt, 'yyyy-MM-dd')}"></span>
-                    <span class="text-muted" th:text="|댓글(${#lists.size(item.comments)})|"></span>
+                    <span class="text-muted" th:text="${article.author}"></span>
+                    <span class="text-muted" th:text="${#temporals.format(article.createdAt, 'yyyy-MM-dd')}"></span>
+                    <span class="text-muted" th:text="|댓글(${article.commentCount})|"></span>
                 </div>
             </div>
         </div>
         <br>
     </div>
+
+    <div class="m-3" th:if="${!page.isEmpty()}">
+        <ul class="pagination justify-content-center" th:with="buttons = 10">
+            <li class="page-item" th:classappend="${page.number < buttons} ? 'disabled'">
+                <a class="page-link" th:onclick="|goToPage(${page.number / buttons * buttons})|" style="cursor:pointer;">이전</a>
+            </li>
+            <li th:each="p: ${#numbers.sequence(page.number / buttons * buttons + 1, page.number / buttons * buttons + buttons)}"
+                th:if="${p <= page.totalPages}"
+                th:classappend="${p == page.number + 1} ? 'active'"
+                class="page-item">
+                <a th:text="${p}" class="page-link" th:onclick="|goToPage(${p})|" style="cursor:pointer;"></a>
+            </li>
+            <li class="page-item" th:classappend="${page.number >= (page.totalPages - 1) / buttons * buttons} ? 'disabled'">
+                <a class="page-link" th:onclick="|goToPage(${page.number / buttons * buttons + buttons + 1})|" style="cursor:pointer;">다음</a>
+            </li>
+        </ul>
+    </div>
+    <div class="alert alert-danger" th:if="${page.isEmpty()}">해당 페이지에 글이 존재하지 않습니다.</div>
 </div>
+
+<script>
+    function goToPage(page) {
+        const url = new URL(window.location.href);
+        url.searchParams.set("page", page);
+        window.location.href = url.toString();
+    }
+</script>
 </body>
 </html>

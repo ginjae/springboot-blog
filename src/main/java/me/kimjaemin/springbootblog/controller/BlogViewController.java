@@ -6,14 +6,15 @@ import me.kimjaemin.springbootblog.domain.Article;
 import me.kimjaemin.springbootblog.dto.ArticleListViewResponse;
 import me.kimjaemin.springbootblog.dto.ArticleViewResponse;
 import me.kimjaemin.springbootblog.service.BlogService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.Comparator;
-import java.util.List;
 
 @RequiredArgsConstructor
 @Controller
@@ -22,18 +23,11 @@ public class BlogViewController {
     private final BlogService blogService;
 
     @GetMapping("/articles")
-    public String getArticle(@RequestParam(required = false) String sort, Model model) {
-        List<ArticleListViewResponse> articles = new java.util.ArrayList<>(blogService.findAll()
-                .stream()
-                .map(ArticleListViewResponse::new)
-                .toList());
-        Comparator<ArticleListViewResponse> comparator = (a, b) -> a.getCreatedAt().compareTo(b.getCreatedAt());
-        if (sort != null && sort.equals("oldest")) {
-            articles.sort(comparator);
-        } else {
-            articles.sort(comparator.reversed());
-        }
-        model.addAttribute("articles", articles);
+    public String getArticles(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+                           Model model) {
+        Page<ArticleListViewResponse> page = blogService.getPage(pageable)
+                .map(ArticleListViewResponse::new);
+        model.addAttribute("page", page);
 
         return "articleList";
     }
