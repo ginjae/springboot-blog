@@ -19,7 +19,11 @@
     </div>
 </div>
 
-<div class="container">
+<div class="container" th:if="${error != null}">
+    <div class="alert alert-danger" th:text="${error}"></div>
+</div>
+
+<div class="container" th:if="${error == null}">
     <article>
         <input type="hidden" id="article-id" th:value="${article.id}">
         <input type="hidden" id="csrf" th:value="${_csrf?.token}">
@@ -35,9 +39,9 @@
                     <textarea class="form-control w-100" rows="15" placeholder="내용을 입력해 주세요."
                               id="content" th:text="${article.content}" style="resize:none;"></textarea>
                     <div class="d-flex justify-content-end mt-2">
-                        <button th:if="${article.id} != null" type="button" id="modify-btn"
+                        <button th:if="${article.id != null}" type="button" id="modify-btn"
                                 class="btn btn-primary btn-block rounded-pill">수정</button>
-                        <button th:if="${article.id} == null" type="button" id="create-btn"
+                        <button th:if="${article.id == null}" type="button" id="create-btn"
                                 class="btn btn-primary btn-block rounded-pill">등록</button>
                     </div>
                 </section>

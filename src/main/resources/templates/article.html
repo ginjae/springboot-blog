@@ -25,11 +25,15 @@
     </div>
 </div>
 
-<div class="container mb-5">
+<div class="container mb-5" th:if="${error != null}">
+    <div class="alert alert-danger" th:text="${error}"></div>
+</div>
+
+<div class="container mb-5" th:if="${error == null}">
     <div class="text-center">
-        <div class="alert alert-danger d-inline-block" th:if="${error} != null" th:text="${error}"></div>
+        <div class="alert alert-danger d-inline-block" th:if="${error != null}" th:text="${error}"></div>
     </div>
-    <article th:if="${error} == null">
+    <article>
         <input type="hidden" id="article-id" th:value="${article.id}">
         <input type="hidden" id="csrf" th:value="${_csrf?.token}">
 

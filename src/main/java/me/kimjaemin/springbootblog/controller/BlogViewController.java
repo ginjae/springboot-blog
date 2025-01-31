@@ -38,7 +38,7 @@ public class BlogViewController {
          try {
             Article article = blogService.findById(id);
             model.addAttribute("article", new ArticleViewResponse(article));
-        } catch (ArticleNotFoundException e){
+        } catch (ArticleNotFoundException e) {
             model.addAttribute("error", e.getErrorCode().getCode() + ": " + e.getMessage());
         }
         return "article";
@@ -49,8 +49,12 @@ public class BlogViewController {
         if (id == null) {
             model.addAttribute("article", new ArticleViewResponse());
         } else {
-            Article article = blogService.findById(id);
-            model.addAttribute("article", new ArticleViewResponse(article));
+            try {
+                Article article = blogService.findById(id);
+                model.addAttribute("article", new ArticleViewResponse(article));
+            } catch (ArticleNotFoundException e) {
+                model.addAttribute("error", e.getErrorCode().getCode() + ": " + e.getMessage());
+            }
         }
         return "writeArticle";
     }
