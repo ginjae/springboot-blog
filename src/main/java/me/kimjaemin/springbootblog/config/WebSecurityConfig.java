@@ -10,12 +10,9 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-
-import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.toH2Console;
 
 @Configuration
 @EnableWebSecurity
@@ -46,9 +43,14 @@ public class WebSecurityConfig {
                         .anyRequest().authenticated())
                 .formLogin(formLogin -> formLogin
                         .loginPage("/login")
-                        .defaultSuccessUrl("/articles"))
+                        .successHandler((request, response, authentication) -> {
+                            String prevPage = (String) request.getSession().getAttribute("prevPage");
+                            if (prevPage != null) {
+                                response.sendRedirect(prevPage);
+                            }
+                        }))
+//                        .defaultSuccessUrl("/articles", false))
                 .logout(logout -> logout
-                        .logoutSuccessUrl("/articles")
                         .invalidateHttpSession(true))
                 .build();
     }
@@ -56,7 +58,7 @@ public class WebSecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http,
                                                        BCryptPasswordEncoder bCryptPasswordEncoder,
-                                                       UserDetailsService userDetailsService)
+                                                       UserDetailService userDetailService)
             throws Exception {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userService);

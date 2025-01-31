@@ -25,34 +25,39 @@
     </style>
 </head>
 <body>
-<a href="/articles" style="text-decoration:none;">
-    <div class="p-5 mb-5 text-center bg-light shadow">
-        <img src="/img/j.png" class="mb-3">
-        <h4 class="mb-3 text-dark">블로그에 오신 것을 환영합니다.</h4>
+<div class="p-3 mb-5 text-center bg-light shadow">
+    <div class="container d-flex justify-content-between align-items-center">
+        <a href="/articles" style="text-decoration:none;">
+            <img src="/img/j.png" alt="j">
+            <span class="h4 text-dark align-middle">'s 블로그</span>
+        </a>
+        <button type="button" sec:authorize="isAnonymous()" class="btn btn-primary m-1 rounded-pill"
+                onclick="location.href='/login'">로그인</button>
+        <button type="button" sec:authorize="isAuthenticated()" class="btn btn-secondary m-1 rounded-pill"
+                onclick="location.href='/logout'">로그아웃</button>
     </div>
-</a>
+</div>
 
 <div class="container">
+    <button type="button" sec:authorize="isAuthenticated()" onclick="location.href='/write-article'"
+            class="btn btn-primary btn-lg shadow"
+            style="position:fixed;bottom:20px;right:20px;z-index:100;border-radius:50%;width:60px;height:60px;">&#x270F;</button>
     <div class="d-flex justify-content-between mb-3">
+        <label>
+            <select class="form-control w-auto rounded-pill" onchange="location.href=value">
+                <option th:selected="${#strings.equals(param.sort, 'latest')}" value="/articles">최신 순</option>
+                <option th:selected="${#strings.equals(param.sort, 'oldest')}" value="/articles?sort=oldest">작성 순</option>
+            </select>
+        </label>
         <div>
-            <button type="button" sec:authorize="isAuthenticated()" class="btn btn-secondary btn-sm"
-                    onclick="location.href='/write-article'">글쓰기</button>
-            <button type="button" sec:authorize="isAnonymous()" class="btn btn-secondary btn-sm"
-                    onclick="location.href='/login'">로그인</button>
-            <button type="button" sec:authorize="isAuthenticated()" class="btn btn-secondary btn-sm"
-                    onclick="location.href='/logout'">로그아웃</button>
         </div>
-        <select class="form-control w-auto" onchange="location.href=value">
-            <option th:selected="${#strings.equals(param.sort, 'latest')}" value="/articles">최신 순</option>
-            <option th:selected="${#strings.equals(param.sort, 'oldest')}" value="/articles?sort=oldest">작성 순</option>
-        </select>
     </div>
     <div th:each="item : ${articles}">
         <div class="card shadow" style="cursor:pointer;" th:onclick="|location.href='@{/articles/{articleId}(articleId=${item.id})}'|">
             <div class="card-body">
                 <h5 class="card-title font-weight-bold" th:text="${item.title}"></h5>
                 <p class="card-text" style="white-space:wrap;word-break:break-all;" th:text="${item.content}"></p>
-                <hr class="mt-2">
+                <hr class="mt-4">
                 <div class="d-flex align-items-center">
                     <span class="text-muted" th:text="${item.author}"></span>
                     <span class="text-muted" th:text="${#temporals.format(item.createdAt, 'yyyy-MM-dd')}"></span>
