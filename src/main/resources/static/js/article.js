@@ -3,7 +3,7 @@ if (createButton) {
     createButton.addEventListener("click", (event) => {
         let body = JSON.stringify({
             title: document.getElementById("title").value,
-            content: document.getElementById("content").value,
+            content: simpleMDE.value(),
         });
         let csrfToken = document.getElementById("csrf").value;
 
@@ -49,7 +49,7 @@ if (modifyButton) {
         let csrfToken = document.getElementById("csrf").value;
         let body = JSON.stringify({
             title: document.getElementById("title").value,
-            content: document.getElementById("content").value,
+            content: simpleMDE.value(),
         });
 
         function success() {

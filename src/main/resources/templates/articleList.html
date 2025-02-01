@@ -31,16 +31,19 @@
             <img src="/img/j.png" alt="J">
 <!--            <span class="h4 text-dark align-middle">'s 블로그</span>-->
         </a>
-        <button type="button" sec:authorize="isAnonymous()" class="btn btn-outline-primary m-1 rounded-pill"
-                onclick="location.href='/login'">로그인</button>
+        <div>
+            <button type="button" sec:authorize="isAnonymous()" class="btn btn-outline-primary m-1 rounded-pill"
+                    onclick="location.href='/login'">로그인</button>
+            <button type="button" sec:authorize="isAnonymous()" class="btn btn-outline-primary m-1 rounded-pill"
+                    onclick="location.href='/signup'">회원가입</button>
+        </div>
         <button type="button" sec:authorize="isAuthenticated()" class="btn btn-outline-primary m-1 rounded-pill"
                 onclick="location.href='/logout'">로그아웃</button>
     </div>
 </div>
 
 <div class="container">
-    <button type="button" sec:authorize="isAuthenticated()" onclick="location.href='/write-article'"
-            class="btn btn-primary btn-lg shadow"
+    <button type="button" onclick="location.href='/write-article'" class="btn btn-primary btn-lg shadow"
             style="position:fixed;bottom:20px;right:20px;z-index:100;border-radius:50%;width:60px;height:60px;">&#x270F;</button>
     <div class="d-flex justify-content-between mb-3">
         <label>
@@ -52,17 +55,19 @@
         <form class="d-flex" th:action="@{/articles}" method="get">
             <input type="hidden" id="sort" name="sort" th:value="${param.sort}">
             <label for="type">
-                <select class="form-control w-auto rounded-pill" id="type" name="type">
+                <select class="form-control w-auto rounded-pill mx-1" id="type" name="type">
                     <option th:selected="${#strings.equals(param.type, 'title')}" value="title">제목</option>
                     <option th:selected="${#strings.equals(param.type, 'content')}" value="content">제목+본문</option>
                     <option th:selected="${#strings.equals(param.type, 'author')}" value="author">작성자</option>
                 </select>
             </label>
-            <label for="keyword">
-                <input class="form-control rounded-pill mx-1" style="width:160px;" type="search" placeholder="검색"
-                       id="keyword" name="keyword" th:value="${param.keyword}" maxlength="50" required>
-            </label>
-            <button class="btn btn-outline-primary rounded-pill" style="height:38px;" type="submit">&#128269;</button>
+            <div class="form-control rounded-pill d-flex justify-content-between align-items-center" style="height:38px;">
+                <label for="keyword" class="m-0">
+                    <input style="width:120px;border:0;outline:0;" type="search" placeholder="검색"
+                           id="keyword" name="keyword" th:value="${param.keyword}" maxlength="50" required>
+                </label>
+                <button class="btn rounded-pill shadow-none" style="transform:translatex(12px);" type="submit">&#128269;</button>
+            </div>
         </form>
     </div>
 
@@ -70,8 +75,8 @@
         <div class="card shadow" style="cursor:pointer;" th:onclick="|location.href='@{/articles/{articleId}(articleId=${article.id})}'|">
             <div class="card-body">
                 <h5 class="card-title font-weight-bold" th:text="${article.title}"></h5>
-                <p class="card-text" style="white-space:wrap;word-break:break-all;" th:text="${article.content}"></p>
-                <hr class="mt-4">
+                <div class="card-text" th:text="${@commonUtil.markdownToText(article.content)}"></div>
+                <hr>
                 <div class="d-flex align-items-center">
                     <span class="text-muted" th:text="${article.author}"></span>
                     <span class="text-muted" th:text="${#temporals.format(article.createdAt, 'yyyy-MM-dd')}"></span>

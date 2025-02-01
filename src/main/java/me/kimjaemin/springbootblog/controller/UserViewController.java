@@ -18,7 +18,11 @@ public class UserViewController {
     }
 
     @GetMapping("/signup")
-    public String signup(AddUserRequest addUserRequest) {
+    public String signup(HttpServletRequest request, AddUserRequest addUserRequest) {
+        String referer = request.getHeader("referer");
+        if (referer != null && !referer.contains("/signup") && !referer.contains("/login")) {
+            request.getSession().setAttribute("prevPage", referer);
+        }
         return "signup";
     }
 

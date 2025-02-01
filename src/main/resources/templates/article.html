@@ -18,8 +18,12 @@
             <img src="/img/j.png" alt="J">
 <!--            <span class="h4 text-dark align-middle">'s 블로그</span>-->
         </a>
-        <button type="button" sec:authorize="isAnonymous()" class="btn btn-outline-primary m-1 rounded-pill"
-                onclick="location.href='/login'">로그인</button>
+        <div>
+            <button type="button" sec:authorize="isAnonymous()" class="btn btn-outline-primary m-1 rounded-pill"
+                    onclick="location.href='/login'">로그인</button>
+            <button type="button" sec:authorize="isAnonymous()" class="btn btn-outline-primary m-1 rounded-pill"
+                    onclick="location.href='/signup'">회원가입</button>
+        </div>
         <button type="button" sec:authorize="isAuthenticated()" class="btn btn-outline-primary m-1 rounded-pill"
                 onclick="location.href='/logout'">로그아웃</button>
     </div>
@@ -45,7 +49,7 @@
             </div>
         </header>
         <section class="mb-4">
-            <p class="mb-4" style="white-space:pre-wrap;word-break:break-all;" th:text="${article.content}"></p>
+            <div th:utext="${@commonUtil.markdownToHtml(article.content)}"></div>
         </section>
         <div class="d-flex justify-content-end">
             <button type="button" sec:authorize="isAuthenticated()" th:onclick="|location.href='/write-article?id=' + ${article.id}|"

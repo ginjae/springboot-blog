@@ -1,7 +1,7 @@
 package me.kimjaemin.springbootblog.config;
 
 import lombok.RequiredArgsConstructor;
-import me.kimjaemin.springbootblog.service.UserDetailService;
+import me.kimjaemin.springbootblog.service.LoginService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,7 +19,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
-    private final UserDetailService userService;
+    private final LoginService loginService;
 
     @Bean
     public WebSecurityCustomizer configure() {
@@ -51,7 +51,6 @@ public class WebSecurityConfig {
                                 response.sendRedirect("/articles");
                             }
                         }))
-//                        .defaultSuccessUrl("/articles", false))
                 .logout(logout -> logout
                         .invalidateHttpSession(true))
                 .build();
@@ -60,10 +59,10 @@ public class WebSecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http,
                                                        BCryptPasswordEncoder bCryptPasswordEncoder,
-                                                       UserDetailService userDetailService)
+                                                       LoginService loginService)
             throws Exception {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userService);
+        authProvider.setUserDetailsService(loginService);
         authProvider.setPasswordEncoder(bCryptPasswordEncoder);
         return new ProviderManager(authProvider);
     }
