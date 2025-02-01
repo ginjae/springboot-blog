@@ -31,9 +31,9 @@
             <img src="/img/j.png" alt="J">
             <span class="h4 text-dark align-middle">'s 블로그</span>
         </a>
-        <button type="button" sec:authorize="isAnonymous()" class="btn btn-primary m-1 rounded-pill"
+        <button type="button" sec:authorize="isAnonymous()" class="btn btn-outline-primary m-1 rounded-pill"
                 onclick="location.href='/login'">로그인</button>
-        <button type="button" sec:authorize="isAuthenticated()" class="btn btn-secondary m-1 rounded-pill"
+        <button type="button" sec:authorize="isAuthenticated()" class="btn btn-outline-primary m-1 rounded-pill"
                 onclick="location.href='/logout'">로그아웃</button>
     </div>
 </div>
@@ -60,9 +60,9 @@
             </label>
             <label for="keyword">
                 <input class="form-control rounded-pill mx-1" style="width:180px;" type="search" placeholder="검색"
-                       id="keyword" name="keyword" th:value="${param.keyword}">
+                       id="keyword" name="keyword" th:value="${param.keyword}" maxlength="50" required>
             </label>
-            <button class="btn btn-secondary rounded-pill" style="height:38px;" type="submit">&#128269;</button>
+            <button class="btn btn-outline-secondary rounded-pill" style="height:38px;" type="submit">&#128269;</button>
         </form>
     </div>
 
@@ -98,7 +98,8 @@
             </li>
         </ul>
     </div>
-    <div class="alert alert-danger" th:if="${page.isEmpty()}">해당 페이지에 글이 존재하지 않습니다.</div>
+    <div class="alert alert-danger" th:if="${param.keyword != null}" th:text="|'${param.keyword}'에 대한 검색 결과가 없습니다.|"></div>
+    <div class="alert alert-danger" th:if="${param.keyword == null && page.isEmpty()}">해당 페이지에 글이 존재하지 않습니다.</div>
 </div>
 
 <script>
