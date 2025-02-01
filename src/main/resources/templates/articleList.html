@@ -44,13 +44,26 @@
             style="position:fixed;bottom:20px;right:20px;z-index:100;border-radius:50%;width:60px;height:60px;">&#x270F;</button>
     <div class="d-flex justify-content-between mb-3">
         <label>
-            <select class="form-control w-auto rounded-pill" onchange="location.href=value">
-                <option th:selected="${#strings.equals(param.sort, 'id,desc')}" value="/articles">최신 순</option>
-                <option th:selected="${#strings.equals(param.sort, 'id,asc')}" value="/articles?sort=id,asc">작성 순</option>
+            <select class="form-control w-auto rounded-pill" th:onchange="|changeParam('sort', value)|">
+                <option th:selected="${#strings.equals(param.sort, 'id,desc')}" value="id,desc">최신 순</option>
+                <option th:selected="${#strings.equals(param.sort, 'id,asc')}" value="id,asc">작성 순</option>
             </select>
         </label>
-        <div>
-        </div>
+        <form class="d-flex" th:action="@{/articles}" method="get">
+            <input type="hidden" id="sort" name="sort" th:value="${param.sort}">
+            <label for="type">
+                <select class="form-control w-auto rounded-pill" id="type" name="type">
+                    <option th:selected="${#strings.equals(param.type, 'title')}" value="title">제목</option>
+                    <option th:selected="${#strings.equals(param.type, 'content')}" value="content">제목+본문</option>
+                    <option th:selected="${#strings.equals(param.type, 'author')}" value="author">작성자</option>
+                </select>
+            </label>
+            <label for="keyword">
+                <input class="form-control rounded-pill mx-1" style="width:180px;" type="search" placeholder="검색"
+                       id="keyword" name="keyword" th:value="${param.keyword}">
+            </label>
+            <button class="btn btn-secondary rounded-pill" style="height:38px;" type="submit">&#128269;</button>
+        </form>
     </div>
 
     <div th:each="article : ${page}">
@@ -72,16 +85,16 @@
     <div class="m-3" th:if="${!page.isEmpty()}">
         <ul class="pagination justify-content-center" th:with="buttons = 10">
             <li class="page-item" th:classappend="${page.number < buttons} ? 'disabled'">
-                <a class="page-link" th:onclick="|goToPage(${page.number / buttons * buttons})|" style="cursor:pointer;">이전</a>
+                <a class="page-link" th:onclick="|changeParam('page', ${page.number / buttons * buttons})|" style="cursor:pointer;">이전</a>
             </li>
             <li th:each="p: ${#numbers.sequence(page.number / buttons * buttons + 1, page.number / buttons * buttons + buttons)}"
                 th:if="${p <= page.totalPages}"
                 th:classappend="${p == page.number + 1} ? 'active'"
                 class="page-item">
-                <a th:text="${p}" class="page-link" th:onclick="|goToPage(${p})|" style="cursor:pointer;"></a>
+                <a th:text="${p}" class="page-link" th:onclick="|changeParam('page', ${p})|" style="cursor:pointer;"></a>
             </li>
             <li class="page-item" th:classappend="${page.number >= (page.totalPages - 1) / buttons * buttons} ? 'disabled'">
-                <a class="page-link" th:onclick="|goToPage(${page.number / buttons * buttons + buttons + 1})|" style="cursor:pointer;">다음</a>
+                <a class="page-link" th:onclick="|changeParam('page', ${page.number / buttons * buttons + buttons + 1})|" style="cursor:pointer;">다음</a>
             </li>
         </ul>
     </div>
@@ -89,9 +102,11 @@
 </div>
 
 <script>
-    function goToPage(page) {
+    function changeParam(key, value) {
         const url = new URL(window.location.href);
-        url.searchParams.set("page", page);
+        if (key === "sort")
+            url.searchParams.set("page", "1");
+        url.searchParams.set(key, value);
         window.location.href = url.toString();
     }
 </script>

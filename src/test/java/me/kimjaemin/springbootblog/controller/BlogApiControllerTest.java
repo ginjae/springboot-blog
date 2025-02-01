@@ -148,7 +148,7 @@ class BlogApiControllerTest {
         result.andExpect(status().isCreated());
     }
 
-    @DisplayName("findArticles: 블로그 글 목록 조회에 성공한다.")
+    @DisplayName("findArticles: 블로그 글 1페이지 목록 조회에 성공한다.")
     @Test
     public void findArticles() throws Exception {
         final String url = "/api/articles";
@@ -165,6 +165,98 @@ class BlogApiControllerTest {
 
         result
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].title").value(title))
+                .andExpect(jsonPath("$.content[0].content").value(content));
+    }
+
+    @DisplayName("findArticlesByTitle: 블로그 글 title로 검색에 성공한다.")
+    @Test
+    public void findArticlesByTitle() throws Exception {
+        final String url = "/api/articles";
+        final String title = "title";
+        final String content = "content";
+        articleRepository.save(Article.builder()
+                .author(user)
+                .title(title)
+                .content(content)
+                .build());
+        articleRepository.save(Article.builder()
+                .author(user)
+                .title(title.toUpperCase())
+                .content(content.toUpperCase())
+                .build());
+
+        final ResultActions result = mockMvc.perform(get(url)
+                .param("type", "title")
+                .param("keyword", "title")
+                .accept(MediaType.APPLICATION_JSON));
+
+        result
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.length()").value(1))
+                .andExpect(jsonPath("$.content[0].title").value(title))
+                .andExpect(jsonPath("$.content[0].content").value(content));
+    }
+
+    @DisplayName("findArticlesByContent: 블로그 글 content로 검색에 성공한다.")
+    @Test
+    public void findArticlesByContent() throws Exception {
+        final String url = "/api/articles";
+        final String title = "title";
+        final String content = "content";
+        articleRepository.save(Article.builder()
+                .author(user)
+                .title(title)
+                .content(content)
+                .build());
+        articleRepository.save(Article.builder()
+                .author(user)
+                .title(title.toUpperCase())
+                .content(content.toUpperCase())
+                .build());
+
+        final ResultActions result = mockMvc.perform(get(url)
+                .param("type", "content")
+                .param("keyword", "content")
+                .accept(MediaType.APPLICATION_JSON));
+
+        result
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.length()").value(1))
+                .andExpect(jsonPath("$.content[0].title").value(title))
+                .andExpect(jsonPath("$.content[0].content").value(content));
+    }
+
+    @DisplayName("findArticlesByAuthor: 블로그 글 author로 검색에 성공한다.")
+    @Test
+    public void findArticlesByAuthor() throws Exception {
+        final String url = "/api/articles";
+        final String title = "title";
+        final String content = "content";
+        articleRepository.save(Article.builder()
+                .author(user)
+                .title(title)
+                .content(content)
+                .build());
+        User otherUser = userRepository.save(User.builder()
+                .email("user2@gmail.com")
+                .password("12345678")
+                .nickname("NICKNAME")
+                .build());
+        articleRepository.save(Article.builder()
+                .author(otherUser)
+                .title(title.toUpperCase())
+                .content(content.toUpperCase())
+                .build());
+
+        final ResultActions result = mockMvc.perform(get(url)
+                .param("type", "author")
+                .param("keyword", "nickname")
+                .accept(MediaType.APPLICATION_JSON));
+
+        result
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.length()").value(1))
                 .andExpect(jsonPath("$.content[0].title").value(title))
                 .andExpect(jsonPath("$.content[0].content").value(content));
     }

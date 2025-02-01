@@ -1,5 +1,6 @@
 package me.kimjaemin.springbootblog.service;
 
+import jakarta.persistence.criteria.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import me.kimjaemin.springbootblog.config.error.exception.ArticleNotFoundException;
@@ -14,13 +15,10 @@ import me.kimjaemin.springbootblog.dto.UpdateArticleRequest;
 import me.kimjaemin.springbootblog.repository.ArticleRepository;
 import me.kimjaemin.springbootblog.repository.CommentRepository;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -33,12 +31,41 @@ public class BlogService {
         return articleRepository.save(request.toEntity(author));
     }
 
-    public List<Article> findAll() {
-        return articleRepository.findAll();
+    public Specification<Article> search(String type, String keyword) {
+        if (type.equals("title")) {
+            return new Specification<Article>() {
+                private static final long serialVersionUID = 1L;
+                @Override
+                public Predicate toPredicate(Root<Article> a, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                    query.distinct(true);
+                    return cb.like(a.get("title"), "%" + keyword + "%");
+                }
+            };
+        } else if (type.equals("author")) {
+            return new Specification<Article>() {
+                private static final long serialVersionUID = 1L;
+                @Override
+                public Predicate toPredicate(Root<Article> a, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                    query.distinct(true);
+                    Join<Article, User> userJoin = a.join("author", JoinType.LEFT);
+                    return cb.like(userJoin.get("nickname"), "%" + keyword + "%");
+                }
+            };
+        }
+        return new Specification<Article>() {
+            private static final long serialVersionUID = 1L;
+            @Override
+            public Predicate toPredicate(Root<Article> a, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                query.distinct(true);
+                return cb.or(cb.like(a.get("title"), "%" + keyword + "%"),
+                        cb.like(a.get("content"), "%" + keyword + "%"));
+            }
+        };
     }
 
-    public Page<Article> getPage(Pageable pageable) {
-        return articleRepository.findAll(pageable);
+    public Page<Article> getPage(Pageable pageable, String type, String keyword) {
+        Specification<Article> specification = search(type, keyword);
+        return articleRepository.findAll(specification, pageable);
     }
 
     public Article findById(long id) {

@@ -24,8 +24,10 @@ public class BlogViewController {
 
     @GetMapping("/articles")
     public String getArticles(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
-                           Model model) {
-        Page<ArticleListViewResponse> page = blogService.getPage(pageable)
+                              @RequestParam(value = "type", defaultValue = "") String type,
+                              @RequestParam(value = "keyword", defaultValue = "") String keyword,
+                              Model model) {
+        Page<ArticleListViewResponse> page = blogService.getPage(pageable, type, keyword)
                 .map(ArticleListViewResponse::new);
         model.addAttribute("page", page);
 

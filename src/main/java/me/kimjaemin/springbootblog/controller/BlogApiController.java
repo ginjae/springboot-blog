@@ -16,8 +16,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RequiredArgsConstructor
 @RestController
 public class BlogApiController {
@@ -34,8 +32,10 @@ public class BlogApiController {
     }
 
     @GetMapping("/api/articles")
-    public ResponseEntity<Page<ArticleResponse>> findArticles(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<ArticleResponse> page = blogService.getPage(pageable)
+    public ResponseEntity<Page<ArticleResponse>> findArticles(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+                                                              @RequestParam(value = "type", defaultValue = "") String type,
+                                                              @RequestParam(value = "keyword", defaultValue = "") String keyword) {
+        Page<ArticleResponse> page = blogService.getPage(pageable, type, keyword)
                 .map(ArticleResponse::new);
 
         return ResponseEntity.ok()
