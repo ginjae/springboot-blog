@@ -16,7 +16,10 @@ if (signupButton) {
             location.replace("/login");
         }
 
-        httpRequest("POST", "/signup", csrfToken, body, success);
+        function fail() {
+        }
+
+        httpRequest("POST", "/signup", csrfToken, body, success, fail);
     });
 }
 
@@ -28,6 +31,10 @@ if (logoutButton) {
         function success() {
             location.reload();
         }
-        httpRequest("POST", "/logout", csrfToken, null, success);
+
+        function fail() {
+        }
+
+        httpRequest("POST", "/logout", csrfToken, null, success, fail);
     });
 }

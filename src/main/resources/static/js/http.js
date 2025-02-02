@@ -1,4 +1,4 @@
-export function httpRequest(method, url, csrfToken, body, success) {
+export function httpRequest(method, url, csrfToken, body, success, fail) {
     fetch(url, {
         method: method,
         headers: {
@@ -12,6 +12,7 @@ export function httpRequest(method, url, csrfToken, body, success) {
         } else {
             return response.json().then((error) => {
                 alert(error.message);
+                return fail(error);
             });
         }
     });

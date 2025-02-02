@@ -15,11 +15,9 @@ if (createButton) {
         }
 
         function fail() {
-            alert("등록 실패했습니다.");
-            location.replace("/articles");
         }
 
-        httpRequest("POST", "/api/articles", csrfToken, body, success);
+        httpRequest("POST", "/api/articles", csrfToken, body, success, fail);
     });
 }
 
@@ -35,11 +33,9 @@ if (deleteButton) {
         }
 
         function fail() {
-            alert("삭제 실패했습니다.");
-            location.replace("/articles");
         }
 
-        httpRequest("DELETE", "/api/articles/" + id, csrfToken, null, success);
+        httpRequest("DELETE", "/api/articles/" + id, csrfToken, null, success, fail);
     });
 }
 
@@ -60,11 +56,10 @@ if (modifyButton) {
         }
 
         function fail() {
-            alert("수정 실패했습니다.");
             location.replace("/articles/" + id);
         }
 
-        httpRequest("PUT", "/api/articles/" + id, csrfToken, body, success);
+        httpRequest("PUT", "/api/articles/" + id, csrfToken, body, success, fail);
     });
 }
 
@@ -84,11 +79,10 @@ if (commentCreateButton) {
         }
 
         function fail() {
-            alert("등록 실패했습니다.");
             location.replace("/articles" + id);
         }
 
-        httpRequest("POST", "/api/comments", csrfToken, body, success);
+        httpRequest("POST", "/api/comments", csrfToken, body, success, fail);
     });
 }
 
@@ -105,10 +99,9 @@ commentDeleteButton.forEach((button) => {
         }
 
         function fail() {
-            alert("삭제 실패했습니다.");
             location.replace("/articles/" + id);
         }
 
-        httpRequest("DELETE", "/api/comments/" + commentId, csrfToken, null, success);
+        httpRequest("DELETE", "/api/comments/" + commentId, csrfToken, null, success, fail);
     });
 });

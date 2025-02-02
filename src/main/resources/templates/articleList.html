@@ -54,8 +54,10 @@
     </div>
 
     <div th:each="article : ${page}">
-        <div class="card shadow" style="cursor:pointer;" th:onclick="|location.href='@{/articles/{articleId}(articleId=${article.id})}'|">
-            <div class="card-body">
+        <div class="card shadow d-flex flex-row justify-content-between" style="cursor:pointer;"
+             th:onclick="|location.href='@{/articles/{articleId}(articleId=${article.id})}'|"
+             th:with="preview = ${@commonUtil.previewImage(article.content)}">
+            <div class="card-body" th:classappend="${!preview.isEmpty()} ? 'w-75'">
                 <h5 class="card-title font-weight-bold" th:text="${article.title}"></h5>
                 <div class="card-text" th:text="${@commonUtil.markdownToText(article.content)}"></div>
                 <hr>
@@ -64,6 +66,10 @@
                     <span class="text-muted" th:text="${#temporals.format(article.createdAt, 'yyyy-MM-dd')}"></span>
                     <span class="text-muted" th:text="|댓글(${article.commentCount})|"></span>
                 </div>
+            </div>
+            <div th:if="${!preview.isEmpty()}" class="w-25" style="height:205px;overflow:hidden;">
+                <img th:src="${preview}" alt="미리보기"
+                     class="w-100" style="height:inherit;object-fit:cover;">
             </div>
         </div>
         <br>

@@ -38,7 +38,7 @@ public class BlogService {
                 @Override
                 public Predicate toPredicate(Root<Article> a, CriteriaQuery<?> query, CriteriaBuilder cb) {
                     query.distinct(true);
-                    return cb.like(a.get("title"), "%" + keyword + "%");
+                    return cb.like(cb.lower(a.get("title")), "%" + keyword.toLowerCase() + "%");
                 }
             };
         } else if (type.equals("author")) {
@@ -48,7 +48,7 @@ public class BlogService {
                 public Predicate toPredicate(Root<Article> a, CriteriaQuery<?> query, CriteriaBuilder cb) {
                     query.distinct(true);
                     Join<Article, User> userJoin = a.join("author", JoinType.LEFT);
-                    return cb.like(userJoin.get("nickname"), "%" + keyword + "%");
+                    return cb.like(cb.lower(userJoin.get("nickname")), "%" + keyword.toLowerCase() + "%");
                 }
             };
         }
@@ -57,8 +57,8 @@ public class BlogService {
             @Override
             public Predicate toPredicate(Root<Article> a, CriteriaQuery<?> query, CriteriaBuilder cb) {
                 query.distinct(true);
-                return cb.or(cb.like(a.get("title"), "%" + keyword + "%"),
-                        cb.like(a.get("content"), "%" + keyword + "%"));
+                return cb.or(cb.like(cb.lower(a.get("title")), "%" + keyword.toLowerCase() + "%"),
+                        cb.like(cb.lower(a.get("content")), "%" + keyword.toLowerCase() + "%"));
             }
         };
     }
