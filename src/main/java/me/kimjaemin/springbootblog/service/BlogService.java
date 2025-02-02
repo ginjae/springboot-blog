@@ -1,7 +1,6 @@
 package me.kimjaemin.springbootblog.service;
 
 import jakarta.persistence.criteria.*;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import me.kimjaemin.springbootblog.config.error.exception.ArticleNotFoundException;
 import me.kimjaemin.springbootblog.config.error.exception.CommentNotFoundException;
@@ -19,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service

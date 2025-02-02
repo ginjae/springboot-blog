@@ -24,7 +24,7 @@ public class BlogApiController {
 
     @PostMapping("/api/articles")
     public ResponseEntity<ArticleResponse> addArticle(@RequestBody @Validated AddArticleRequest addArticleRequest,
-                      @AuthenticationPrincipal User user) {
+                                                      @AuthenticationPrincipal User user) {
         Article savedArticle = blogService.save(addArticleRequest, user);
 
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -60,7 +60,7 @@ public class BlogApiController {
 
     @PutMapping("/api/articles/{id}")
     public ResponseEntity<ArticleResponse> updateArticle(@PathVariable("id") Long id,
-                                                 @RequestBody @Validated UpdateArticleRequest request) {
+                                                         @RequestBody @Validated UpdateArticleRequest request) {
         Article updatedArticle = blogService.update(id, request);
 
         return ResponseEntity.ok()
@@ -68,12 +68,12 @@ public class BlogApiController {
     }
 
     @PostMapping("/api/comments")
-    public ResponseEntity<AddCommentResponse> addComment(@RequestBody @Validated AddCommentRequest addCommentRequest,
-                                                         @AuthenticationPrincipal User user) {
+    public ResponseEntity<CommentResponse> addComment(@RequestBody @Validated AddCommentRequest addCommentRequest,
+                                                      @AuthenticationPrincipal User user) {
         Comment savedComment = blogService.addComment(addCommentRequest, user);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new AddCommentResponse(savedComment));
+                .body(new CommentResponse(savedComment));
     }
 
     @DeleteMapping("/api/comments/{id}")

@@ -14,16 +14,22 @@ public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public Long save(AddUserRequest addUserRequest) {
+    public User save(AddUserRequest addUserRequest) {
+        if (!addUserRequest.getPassword1().equals(addUserRequest.getPassword2())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
         if (userRepository.findByEmail(addUserRequest.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("Duplicated email");
+            throw new IllegalArgumentException("이미 등록된 이메일 입니다.");
+        }
+        if (userRepository.findByNickname(addUserRequest.getNickname()).isPresent()) {
+            throw new IllegalArgumentException("이미 등록된 닉네임 입니다.");
         }
 
         return userRepository.save(User.builder()
                 .email(addUserRequest.getEmail())
                 .password(bCryptPasswordEncoder.encode(addUserRequest.getPassword1()))
                 .nickname(addUserRequest.getNickname())
-                .build()).getId();
+                .build());
     }
 
 }

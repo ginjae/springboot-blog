@@ -37,8 +37,9 @@
             <button type="button" sec:authorize="isAnonymous()" class="btn btn-outline-primary m-1 rounded-pill"
                     onclick="location.href='/signup'">회원가입</button>
         </div>
+        <input type="hidden" id="csrf" th:value="${_csrf?.token}">
         <button type="button" sec:authorize="isAuthenticated()" class="btn btn-outline-primary m-1 rounded-pill"
-                onclick="location.href='/logout'">로그아웃</button>
+                id="logout-btn">로그아웃</button>
     </div>
 </div>
 
@@ -46,29 +47,10 @@
     <button type="button" onclick="location.href='/write-article'" class="btn btn-primary btn-lg shadow"
             style="position:fixed;bottom:20px;right:20px;z-index:100;border-radius:50%;width:60px;height:60px;">&#x270F;</button>
     <div class="d-flex justify-content-between mb-3">
-        <label>
-            <select class="form-control w-auto rounded-pill" th:onchange="|changeParam('sort', value)|">
-                <option th:selected="${#strings.equals(param.sort, 'id,desc')}" value="id,desc">최신 순</option>
-                <option th:selected="${#strings.equals(param.sort, 'id,asc')}" value="id,asc">작성 순</option>
-            </select>
-        </label>
-        <form class="d-flex" th:action="@{/articles}" method="get">
-            <input type="hidden" id="sort" name="sort" th:value="${param.sort}">
-            <label for="type">
-                <select class="form-control w-auto rounded-pill mx-1" id="type" name="type">
-                    <option th:selected="${#strings.equals(param.type, 'title')}" value="title">제목</option>
-                    <option th:selected="${#strings.equals(param.type, 'content')}" value="content">제목+본문</option>
-                    <option th:selected="${#strings.equals(param.type, 'author')}" value="author">작성자</option>
-                </select>
-            </label>
-            <div class="form-control rounded-pill d-flex justify-content-between align-items-center" style="height:38px;">
-                <label for="keyword" class="m-0">
-                    <input style="background-color:transparent;width:120px;border:0;outline:0;" type="search" placeholder="검색"
-                           id="keyword" name="keyword" th:value="${param.keyword}" maxlength="50" required>
-                </label>
-                <button class="btn rounded-pill shadow-none" style="transform:translatex(12px);" type="submit">&#128269;</button>
-            </div>
-        </form>
+        <select class="form-control w-auto rounded-pill" th:onchange="|changeParam('sort', value)|" aria-label="정렬">
+            <option th:selected="${#strings.equals(param.sort, 'id,desc')}" value="id,desc">최신 순</option>
+            <option th:selected="${#strings.equals(param.sort, 'id,asc')}" value="id,asc">작성 순</option>
+        </select>
     </div>
 
     <div th:each="article : ${page}">
@@ -103,8 +85,25 @@
             </li>
         </ul>
     </div>
+    <hr>
+
+    <form class="d-flex justify-content-center" th:action="@{/articles}" method="get">
+        <input type="hidden" id="sort" name="sort" th:value="${param.sort}">
+        <select class="form-control w-auto rounded-pill mx-1" id="type" name="type" aria-label="검색 종류">
+            <option th:selected="${#strings.equals(param.type, 'title')}" value="title">제목</option>
+            <option th:selected="${#strings.equals(param.type, 'content')}" value="content">제목+본문</option>
+            <option th:selected="${#strings.equals(param.type, 'author')}" value="author">작성자</option>
+        </select>
+        <div class="form-control rounded-pill d-flex justify-content-between align-items-center pl-3 pr-0" style="width:200px;height:38px;">
+            <input style="background-color:transparent;width:136px;border:0;outline:0;" type="search" placeholder="검색"
+                   id="keyword" name="keyword" th:value="${param.keyword}" maxlength="50" required>
+            <button class="btn rounded-pill shadow-none" type="submit">&#128269;</button>
+        </div>
+    </form>
+
 </div>
 
+<script type="module" src="/js/user.js"></script>
 <script>
     function changeParam(key, value) {
         const url = new URL(window.location.href);

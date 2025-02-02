@@ -1,3 +1,5 @@
+import { httpRequest } from './http.js';
+
 const createButton = document.getElementById("create-btn");
 if (createButton) {
     createButton.addEventListener("click", (event) => {
@@ -110,22 +112,3 @@ commentDeleteButton.forEach((button) => {
         httpRequest("DELETE", "/api/comments/" + commentId, csrfToken, null, success);
     });
 });
-
-function httpRequest(method, url, csrfToken, body, success) {
-    fetch(url, {
-        method: method,
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRF-TOKEN" : csrfToken
-        },
-        body: body,
-    }).then((response) => {
-        if (response.status === 200 || response.status === 201) {
-            return success();
-        } else {
-            return response.json().then((error) => {
-                alert(error.code + ": " + error.message);
-            });
-        }
-    });
-}

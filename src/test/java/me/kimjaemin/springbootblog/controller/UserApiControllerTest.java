@@ -1,6 +1,8 @@
 package me.kimjaemin.springbootblog.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import me.kimjaemin.springbootblog.domain.User;
+import me.kimjaemin.springbootblog.dto.AddUserRequest;
 import me.kimjaemin.springbootblog.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,6 +31,9 @@ class UserApiControllerTest {
     protected MockMvc mockMvc;
 
     @Autowired
+    protected ObjectMapper objectMapper;
+
+    @Autowired
     private WebApplicationContext context;
 
     @Autowired
@@ -50,13 +55,12 @@ class UserApiControllerTest {
         final String email = "user1@gmail.com";
         final String password = "12345678";
         final String nickname = "user1";
+        final AddUserRequest userRequest = new AddUserRequest(email, password, password, nickname);
+        final String requestBody = objectMapper.writeValueAsString(userRequest);
 
         mockMvc.perform(post(url)
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("email", email)
-                .param("password1", password)
-                .param("password2", password)
-                .param("nickname", nickname));
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody));
 
         User user = userRepository.findByEmail(email).get();
         assertThat(user).isNotNull();

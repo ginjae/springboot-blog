@@ -3,62 +3,40 @@ package me.kimjaemin.springbootblog.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import me.kimjaemin.springbootblog.domain.User;
 import me.kimjaemin.springbootblog.dto.AddUserRequest;
+import me.kimjaemin.springbootblog.dto.UserResponse;
 import me.kimjaemin.springbootblog.service.UserService;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
-import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
+import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
-@Controller
+@RestController
 public class UserApiController {
 
     private final UserService userService;
 
     @PostMapping("/signup")
-    public String signup(@Validated AddUserRequest addUserRequest,
-                         BindingResult bindingResult,
-                         RedirectAttributes redirectAttributes) {
-        if (bindingResult.hasErrors()) {
-            return "signup";
-        }
-        if (!addUserRequest.getPassword1().equals(addUserRequest.getPassword2())) {
-            bindingResult.rejectValue("password2", "passwordInCorrect",
-                    "비밀번호가 일치하지 않습니다.");
-            return "signup";
-        }
-        try {
-            userService.save(addUserRequest);
-        } catch (IllegalArgumentException e) {
-            bindingResult.rejectValue("email", "signupFailed", "이미 등록된 이메일입니다.");
-            return "signup";
-        } catch (DataIntegrityViolationException e) {
-            bindingResult.rejectValue("nickname", "signupFailed", "이미 등록된 닉네임입니다.");
-            return "signup";
-        } catch (Exception e) {
-            bindingResult.reject("signupFailed", e.getMessage());
-            return "signup";
-        }
-        redirectAttributes.addFlashAttribute("msg", "회원가입이 완료되었습니다.");
-        return "redirect:/login";
+    public ResponseEntity<UserResponse> signup(@RequestBody @Validated AddUserRequest addUserRequest, Model model) {
+        User user = userService.save(addUserRequest);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new UserResponse(user));
     }
 
     @GetMapping("/logout")
-    public String logout(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response) {
         new SecurityContextLogoutHandler().logout(request, response,
                 SecurityContextHolder.getContext().getAuthentication());
-        String redirect = request.getHeader("referer");
-        if (redirect != null) {
-            return "redirect:" + redirect;
-        } else {
-            return "redirect:/articles";
-        }
+        return ResponseEntity.ok()
+                .build();
     }
 
 }
