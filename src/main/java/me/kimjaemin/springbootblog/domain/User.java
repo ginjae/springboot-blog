@@ -32,16 +32,20 @@ public class User implements UserDetails {
     @Column(name = "nickname", length = 15, nullable = false, unique = true)
     private String nickname;
 
+    @Column(name = "role", nullable = false)
+    private String role;
+
     @Builder
-    public User(String email, String password, String nickname) {
+    public User(String email, String password, String nickname, String role) {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
+        this.role = role != null ? role : "ROLE_USER";
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        return List.of(new SimpleGrantedAuthority(role));
     }
 
     @Override

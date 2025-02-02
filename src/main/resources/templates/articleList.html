@@ -12,6 +12,7 @@
             transform: scale(1.05);
         }
         .card-text {
+            height: 72px;
             overflow: hidden;
             text-overflow: ellipsis;
             display: -webkit-box;
@@ -67,7 +68,7 @@
                     <span class="text-muted" th:text="|댓글(${article.commentCount})|"></span>
                 </div>
             </div>
-            <div th:if="${!preview.isEmpty()}" class="w-25" style="height:205px;overflow:hidden;">
+            <div th:if="${!preview.isEmpty()}" class="w-25" style="height:207px;overflow:hidden;">
                 <img th:src="${preview}" alt="미리보기"
                      class="w-100" style="height:inherit;object-fit:cover;">
             </div>
@@ -93,7 +94,7 @@
     </div>
     <hr>
 
-    <form class="d-flex justify-content-center" th:action="@{/articles}" method="get">
+    <form class="d-flex justify-content-center mb-5" th:action="@{/articles}" method="get">
         <input type="hidden" id="sort" name="sort" th:value="${param.sort}">
         <select class="form-control w-auto rounded-pill mx-1" id="type" name="type" aria-label="검색 종류">
             <option th:selected="${#strings.equals(param.type, 'title')}" value="title">제목</option>

@@ -16,6 +16,7 @@ import me.kimjaemin.springbootblog.repository.CommentRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -93,7 +94,11 @@ public class BlogService {
     }
 
     private static void authorizeArticleAuthor(Article article) {
-        Long id = ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
+            return;
+        }
+        Long id = user.getId();
         if (!article.getAuthor().getId().equals(id)) {
             throw new UnauthorizedException();
         }
@@ -115,7 +120,11 @@ public class BlogService {
     }
 
     private static void authorizeCommentAuthor(Comment comment) {
-        Long id = ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long id = user.getId();
+        if (user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
+            return;
+        }
         if (!comment.getAuthor().getId().equals(id)) {
             throw new UnauthorizedException();
         }

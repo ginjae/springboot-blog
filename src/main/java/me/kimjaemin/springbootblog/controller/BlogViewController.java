@@ -28,7 +28,7 @@ public class BlogViewController {
     }
 
     @GetMapping("/articles")
-    public String getArticles(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+    public String getArticles(@PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
                               @RequestParam(value = "type", defaultValue = "") String type,
                               @RequestParam(value = "keyword", defaultValue = "") String keyword,
                               Model model) {
