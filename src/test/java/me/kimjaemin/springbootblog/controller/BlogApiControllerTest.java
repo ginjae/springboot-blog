@@ -182,8 +182,8 @@ class BlogApiControllerTest {
                 .build());
         articleRepository.save(Article.builder()
                 .author(user)
-                .title(title.toUpperCase())
-                .content(content.toUpperCase())
+                .title(new StringBuffer(title).reverse().toString())
+                .content(new StringBuffer(content).reverse().toString())
                 .build());
 
         final ResultActions result = mockMvc.perform(get(url)
@@ -211,8 +211,8 @@ class BlogApiControllerTest {
                 .build());
         articleRepository.save(Article.builder()
                 .author(user)
-                .title(title.toUpperCase())
-                .content(content.toUpperCase())
+                .title(new StringBuffer(title).reverse().toString())
+                .content(new StringBuffer(content).reverse().toString())
                 .build());
 
         final ResultActions result = mockMvc.perform(get(url)
@@ -241,12 +241,12 @@ class BlogApiControllerTest {
         User otherUser = userRepository.save(User.builder()
                 .email("user2@gmail.com")
                 .password("12345678")
-                .nickname("NICKNAME")
+                .nickname(new StringBuffer("nickname").reverse().toString())
                 .build());
         articleRepository.save(Article.builder()
                 .author(otherUser)
-                .title(title.toUpperCase())
-                .content(content.toUpperCase())
+                .title(new StringBuffer(title).reverse().toString())
+                .content(new StringBuffer(content).reverse().toString())
                 .build());
 
         final ResultActions result = mockMvc.perform(get(url)

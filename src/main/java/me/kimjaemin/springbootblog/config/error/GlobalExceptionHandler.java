@@ -1,6 +1,5 @@
 package me.kimjaemin.springbootblog.config.error;
 
-import jdk.jfr.Experimental;
 import lombok.extern.slf4j.Slf4j;
 import me.kimjaemin.springbootblog.config.error.exception.BusinessBaseException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
