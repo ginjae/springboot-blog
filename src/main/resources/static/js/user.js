@@ -1,4 +1,4 @@
-import { httpRequest, changeParam } from './http.js';
+import { httpRequest } from './http.js';
 
 const signupButton = document.getElementById("signup-btn");
 if (signupButton) {

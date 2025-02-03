@@ -17,11 +17,3 @@ export function httpRequest(method, url, csrfToken, body, success, fail) {
         }
     });
 }
-
-export function changeParam(key, value) {
-    const url = new URL(window.location.href);
-    if (key === "sort")
-        url.searchParams.set("page", "1");
-    url.searchParams.set(key, value);
-    window.location.href = url.toString();
-}
