@@ -3,12 +3,14 @@ package me.kimjaemin.springbootblog.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import me.kimjaemin.springbootblog.config.error.ErrorCode;
 import me.kimjaemin.springbootblog.domain.Article;
+import me.kimjaemin.springbootblog.domain.Category;
 import me.kimjaemin.springbootblog.domain.Comment;
 import me.kimjaemin.springbootblog.domain.User;
 import me.kimjaemin.springbootblog.dto.AddArticleRequest;
 import me.kimjaemin.springbootblog.dto.AddCommentRequest;
 import me.kimjaemin.springbootblog.dto.UpdateArticleRequest;
 import me.kimjaemin.springbootblog.repository.ArticleRepository;
+import me.kimjaemin.springbootblog.repository.CategoryRepository;
 import me.kimjaemin.springbootblog.repository.CommentRepository;
 import me.kimjaemin.springbootblog.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -56,7 +58,12 @@ class BlogApiControllerTest {
     @Autowired
     CommentRepository commentRepository;
 
+    @Autowired
+    CategoryRepository categoryRepository;
+
     User user;
+
+    Category category;
 
     @BeforeEach
     public void mockMvcSetup() {
@@ -64,6 +71,11 @@ class BlogApiControllerTest {
                 .build();
         articleRepository.deleteAll();
         commentRepository.deleteAll();
+        categoryRepository.deleteAll();
+        category = Category.builder()
+                .name("all")
+                .build();
+        categoryRepository.save(category);
     }
 
     @BeforeEach
@@ -72,7 +84,7 @@ class BlogApiControllerTest {
         user = userRepository.save(User.builder()
                 .email("user@gmail.com")
                 .password("12345678")
-                .nickname("nickname")
+                .nickname("user")
                 .build());
 
         SecurityContext context = SecurityContextHolder.getContext();
@@ -83,9 +95,10 @@ class BlogApiControllerTest {
     @Test
     public void addArticle() throws Exception {
         final String url = "/api/articles";
+        final String category = "all";
         final String title = "title";
         final String content = "content";
-        final AddArticleRequest userRequest = new AddArticleRequest(title, content);
+        final AddArticleRequest userRequest = new AddArticleRequest(category, title, content);
         final String requestBody = objectMapper.writeValueAsString(userRequest);
 
         ResultActions result = mockMvc.perform(post(url)
@@ -104,9 +117,10 @@ class BlogApiControllerTest {
     @Test
     public void addArticleNullValidation() throws Exception {
         final String url = "/api/articles";
+        final String category = "all";
         final String title = null;
         final String content = "content";
-        final AddArticleRequest userRequest = new AddArticleRequest(title, content);
+        final AddArticleRequest userRequest = new AddArticleRequest(category, title, content);
         final String requestBody = objectMapper.writeValueAsString(userRequest);
 
         ResultActions result = mockMvc.perform(post(url)
@@ -120,9 +134,10 @@ class BlogApiControllerTest {
     @Test
     public void addArticleSizeValidation() throws Exception {
         final String url = "/api/articles";
+        final String category = "all";
         final String title = "t".repeat(31);
         final String content = "content";
-        final AddArticleRequest userRequest = new AddArticleRequest(title, content);
+        final AddArticleRequest userRequest = new AddArticleRequest(category, title, content);
         final String requestBody = objectMapper.writeValueAsString(userRequest);
 
         ResultActions result = mockMvc.perform(post(url)
@@ -136,9 +151,10 @@ class BlogApiControllerTest {
     @Test
     public void addArticleContentValidation() throws Exception {
         final String url = "/api/articles";
+        final String category = "all";
         final String title = "title";
         final String content = "c".repeat(257);
-        final AddArticleRequest userRequest = new AddArticleRequest(title, content);
+        final AddArticleRequest userRequest = new AddArticleRequest(category, title, content);
         final String requestBody = objectMapper.writeValueAsString(userRequest);
 
         ResultActions result = mockMvc.perform(post(url)
@@ -156,6 +172,7 @@ class BlogApiControllerTest {
         final String content = "content";
         articleRepository.save(Article.builder()
                 .author(user)
+                .category(category)
                 .title(title)
                 .content(content)
                 .build());
@@ -177,11 +194,13 @@ class BlogApiControllerTest {
         final String content = "content";
         articleRepository.save(Article.builder()
                 .author(user)
+                .category(category)
                 .title(title)
                 .content(content)
                 .build());
         articleRepository.save(Article.builder()
                 .author(user)
+                .category(category)
                 .title(new StringBuffer(title).reverse().toString())
                 .content(new StringBuffer(content).reverse().toString())
                 .build());
@@ -206,11 +225,13 @@ class BlogApiControllerTest {
         final String content = "content";
         articleRepository.save(Article.builder()
                 .author(user)
+                .category(category)
                 .title(title)
                 .content(content)
                 .build());
         articleRepository.save(Article.builder()
                 .author(user)
+                .category(category)
                 .title(new StringBuffer(title).reverse().toString())
                 .content(new StringBuffer(content).reverse().toString())
                 .build());
@@ -235,23 +256,25 @@ class BlogApiControllerTest {
         final String content = "content";
         articleRepository.save(Article.builder()
                 .author(user)
+                .category(category)
                 .title(title)
                 .content(content)
                 .build());
         User otherUser = userRepository.save(User.builder()
                 .email("user2@gmail.com")
                 .password("12345678")
-                .nickname(new StringBuffer("nickname").reverse().toString())
+                .nickname(new StringBuffer("user2").reverse().toString())
                 .build());
         articleRepository.save(Article.builder()
                 .author(otherUser)
+                .category(category)
                 .title(new StringBuffer(title).reverse().toString())
                 .content(new StringBuffer(content).reverse().toString())
                 .build());
 
         final ResultActions result = mockMvc.perform(get(url)
                 .param("type", "author")
-                .param("keyword", "nickname")
+                .param("keyword", "user")
                 .accept(MediaType.APPLICATION_JSON));
 
         result
@@ -269,6 +292,7 @@ class BlogApiControllerTest {
         final String content = "content";
         Article savedArticle = articleRepository.save(Article.builder()
                 .author(user)
+                .category(category)
                 .title(title)
                 .content(content)
                 .build());
@@ -317,6 +341,7 @@ class BlogApiControllerTest {
         final String content = "content";
         Article savedArticle = articleRepository.save(Article.builder()
                 .author(user)
+                .category(category)
                 .title(title)
                 .content(content)
                 .build());
@@ -352,10 +377,11 @@ class BlogApiControllerTest {
         User otherUser = userRepository.save(User.builder()
                 .email("user2@gmail.com")
                 .password("12345678")
-                .nickname("nickname2")
+                .nickname("user2")
                 .build());
         Article savedArticle = articleRepository.save(Article.builder()
                 .author(otherUser)
+                .category(category)
                 .title(title)
                 .content(content)
                 .build());
@@ -377,12 +403,14 @@ class BlogApiControllerTest {
         final String content = "content";
         Article savedArticle = articleRepository.save(Article.builder()
                 .author(user)
+                .category(category)
                 .title(title)
                 .content(content)
                 .build());
+        final String newCategory = "all";
         final String newTitle = "new title";
         final String newContent = "new content";
-        UpdateArticleRequest request = new UpdateArticleRequest(newTitle, newContent);
+        UpdateArticleRequest request = new UpdateArticleRequest(newCategory, newTitle, newContent);
 
         ResultActions result = mockMvc.perform(put(url, savedArticle.getId())
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -403,16 +431,18 @@ class BlogApiControllerTest {
         User otherUser = userRepository.save(User.builder()
                 .email("user2@gmail.com")
                 .password("12345678")
-                .nickname("nickname2")
+                .nickname("user2")
                 .build());
         Article savedArticle = articleRepository.save(Article.builder()
                 .author(otherUser)
+                .category(category)
                 .title(title)
                 .content(content)
                 .build());
+        final String newCategory = "all";
         final String newTitle = "new title";
         final String newContent = "new content";
-        UpdateArticleRequest request = new UpdateArticleRequest(newTitle, newContent);
+        UpdateArticleRequest request = new UpdateArticleRequest(newCategory, newTitle, newContent);
 
         ResultActions result = mockMvc.perform(put(url, savedArticle.getId())
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -434,10 +464,11 @@ class BlogApiControllerTest {
         User otherUser = userRepository.save(User.builder()
                 .email("user2@gmail.com")
                 .password("12345678")
-                .nickname("nickname2")
+                .nickname("user2")
                 .build());
         Article savedArticle = articleRepository.save(Article.builder()
                 .author(otherUser)
+                .category(category)
                 .title(title)
                 .content(content)
                 .build());
@@ -466,10 +497,11 @@ class BlogApiControllerTest {
         User otherUser = userRepository.save(User.builder()
                 .email("user2@gmail.com")
                 .password("12345678")
-                .nickname("nickname2")
+                .nickname("user2")
                 .build());
         Article savedArticle = articleRepository.save(Article.builder()
                 .author(otherUser)
+                .category(category)
                 .title(title)
                 .content(content)
                 .build());

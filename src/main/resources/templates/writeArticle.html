@@ -2,7 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>글 작성</title>
+    <meta name="viewport" content="width=1000, user-scalable=yes">
+    <title th:text="${article.id != null} ? '글 수정' : '글 작성'"></title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
     <style>
@@ -21,7 +22,7 @@
         <input type="hidden" id="csrf" th:value="${_csrf?.token}">
         <div sec:authorize="isAuthenticated()">
             <button type="button" class="btn btn-outline-primary m-1 rounded-pill"
-                    onclick="location.href='/userinfo'">회원정보</button>
+                    onclick="location.href='/userinfo'">내 정보</button>
             <button type="button" class="btn btn-outline-primary m-1 rounded-pill"
                     id="logout-btn">로그아웃</button>
         </div>
@@ -39,7 +40,11 @@
         <div class="card-body p-5">
             <h3 class="card-title font-weight-bold mb-4" th:if="${article.id != null}">글 수정</h3>
             <h3 class="card-title font-weight-bold mb-4" th:if="${article.id == null}">글 작성</h3>
-            <header class="mb-2">
+            <header class="mb-2 d-flex justify-content-start">
+                <select class="form-control w-auto mr-2" id="category" aria-label="카테고리">
+                    <option th:selected="${category.name == article.category}" th:each="category : ${categories}"
+                            th:value="${category.name}" th:text="${category.name}"></option>
+                </select>
                 <input type="text" class="form-control" placeholder="제목을 입력해 주세요." id="title"
                        th:value="${article.title}" aria-label="제목 입력" maxlength="30" autofocus>
             </header>

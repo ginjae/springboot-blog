@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class UpdateUserRequest {
 
     @NotBlank(message = "닉네임을 입력해 주세요.")
-    @Size(min = 2, max = 15, message = "닉네임은 2-15자로 입력해 주세요.")
+    @Size(min = 2, max = 8, message = "닉네임은 2-8자로 입력해 주세요.")
     private String nickname;
 
 }

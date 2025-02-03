@@ -29,11 +29,18 @@ public class Article {
     @JoinColumn(name = "author_id", nullable = false)
     private User author;
 
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
+
     @Column(name = "title", length = 30, nullable = false)
     private String title;
 
     @Column(name = "content", columnDefinition = "TEXT", nullable = false)
     private String content;
+
+    @OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE)
+    private List<Comment> comments;
 
     @CreatedDate
     @Column(name = "created_at")
@@ -43,18 +50,17 @@ public class Article {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE)
-    private List<Comment> comments;
-
     @Builder
-    public Article(User author, String title, String content) {
+    public Article(User author, Category category, String title, String content) {
         this.author = author;
+        this.category = category;
         this.title = title;
         this.content = content;
         this.comments = new ArrayList<>();
     }
 
-    public void update(String title, String content) {
+    public void update(Category category, String title, String content) {
+        this.category = category;
         this.title = title;
         this.content = content;
     }

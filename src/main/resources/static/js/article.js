@@ -4,6 +4,7 @@ const createButton = document.getElementById("create-btn");
 if (createButton) {
     createButton.addEventListener("click", (event) => {
         let body = JSON.stringify({
+            categoryName: document.getElementById("category").value,
             title: document.getElementById("title").value,
             content: simpleMDE.value(),
         });
@@ -46,6 +47,7 @@ if (modifyButton) {
         let id = params.get("id");
         let csrfToken = document.getElementById("csrf").value;
         let body = JSON.stringify({
+            categoryName: document.getElementById("category").value,
             title: document.getElementById("title").value,
             content: simpleMDE.value(),
         });
@@ -56,7 +58,6 @@ if (modifyButton) {
         }
 
         function fail() {
-            location.replace("/articles/" + id);
         }
 
         httpRequest("PUT", "/api/articles/" + id, csrfToken, body, success, fail);
@@ -79,7 +80,6 @@ if (commentCreateButton) {
         }
 
         function fail() {
-            location.replace("/articles" + id);
         }
 
         httpRequest("POST", "/api/comments", csrfToken, body, success, fail);
@@ -99,7 +99,6 @@ commentDeleteButton.forEach((button) => {
         }
 
         function fail() {
-            location.replace("/articles/" + id);
         }
 
         httpRequest("DELETE", "/api/comments/" + commentId, csrfToken, null, success, fail);

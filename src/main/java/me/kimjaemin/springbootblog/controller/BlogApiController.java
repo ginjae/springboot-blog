@@ -34,8 +34,9 @@ public class BlogApiController {
     @GetMapping("/api/articles")
     public ResponseEntity<Page<ArticleResponse>> findArticles(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
                                                               @RequestParam(value = "type", defaultValue = "") String type,
-                                                              @RequestParam(value = "keyword", defaultValue = "") String keyword) {
-        Page<ArticleResponse> page = blogService.getPage(pageable, type, keyword)
+                                                              @RequestParam(value = "keyword", defaultValue = "") String keyword,
+                                                              @RequestParam(value = "category", defaultValue = "") String categoryName) {
+        Page<ArticleResponse> page = blogService.getPage(pageable, type, keyword, categoryName)
                 .map(ArticleResponse::new);
 
         return ResponseEntity.ok()

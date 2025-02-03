@@ -1,9 +1,12 @@
 package me.kimjaemin.springbootblog.controller;
 
 import lombok.RequiredArgsConstructor;
+import me.kimjaemin.springbootblog.dto.CategoryResponse;
 import me.kimjaemin.springbootblog.dto.UserResponse;
+import me.kimjaemin.springbootblog.repository.CategoryRepository;
 import me.kimjaemin.springbootblog.repository.UserRepository;
-import org.springframework.security.access.prepost.PreAuthorize;
+import me.kimjaemin.springbootblog.service.CategoryService;
+import me.kimjaemin.springbootblog.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,11 +15,20 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class AdminViewController {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
+    private final CategoryService categoryService;
 
     @GetMapping("/admin")
     public String admin(Model model) {
-        model.addAttribute("users", userRepository.findAll().stream().map(UserResponse::new).toList());
+        model.addAttribute("users", userService.findAll()
+                .stream()
+                .map(UserResponse::new)
+                .toList());
+        model.addAttribute("categories", categoryService.findAll()
+                .stream()
+                .map(CategoryResponse::new)
+                .toList());
+
         return "admin";
     }
 

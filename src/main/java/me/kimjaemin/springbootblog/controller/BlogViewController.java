@@ -5,7 +5,9 @@ import me.kimjaemin.springbootblog.config.error.exception.ArticleNotFoundExcepti
 import me.kimjaemin.springbootblog.domain.Article;
 import me.kimjaemin.springbootblog.dto.ArticleListViewResponse;
 import me.kimjaemin.springbootblog.dto.ArticleViewResponse;
+import me.kimjaemin.springbootblog.dto.CategoryResponse;
 import me.kimjaemin.springbootblog.service.BlogService;
+import me.kimjaemin.springbootblog.service.CategoryService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class BlogViewController {
 
     private final BlogService blogService;
+    private final CategoryService categoryService;
 
     @GetMapping("/")
     public String root() {
@@ -31,14 +34,18 @@ public class BlogViewController {
     public String getArticles(@PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
                               @RequestParam(value = "type", defaultValue = "") String type,
                               @RequestParam(value = "keyword", defaultValue = "") String keyword,
+                              @RequestParam(value = "category", defaultValue = "") String categoryName,
                               Model model) {
-        Page<ArticleListViewResponse> page = blogService.getPage(pageable, type, keyword)
+        Page<ArticleListViewResponse> page = blogService.getPage(pageable, type, keyword, categoryName)
                 .map(ArticleListViewResponse::new);
         model.addAttribute("page", page);
+        model.addAttribute("categories", categoryService.findAll()
+                .stream()
+                .map(CategoryResponse::new)
+                .toList());
 
         return "articleList";
     }
-
 
     @GetMapping("/articles/{id}")
     public String getArticle(@PathVariable("id") Long id, Model model) {
@@ -48,6 +55,11 @@ public class BlogViewController {
         } catch (ArticleNotFoundException e) {
             model.addAttribute("error", e.getMessage());
         }
+        model.addAttribute("categories", categoryService.findAll()
+                .stream()
+                .map(CategoryResponse::new)
+                .toList());
+
         return "article";
     }
 
@@ -64,6 +76,11 @@ public class BlogViewController {
                 model.addAttribute("article", new ArticleViewResponse());
             }
         }
+        model.addAttribute("categories", categoryService.findAll()
+                .stream()
+                .map(CategoryResponse::new)
+                .toList());
+
         return "writeArticle";
     }
 

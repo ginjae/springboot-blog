@@ -9,6 +9,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 public class UserService {
@@ -32,6 +34,10 @@ public class UserService {
                 .password(bCryptPasswordEncoder.encode(addUserRequest.getPassword1()))
                 .nickname(addUserRequest.getNickname())
                 .build());
+    }
+
+    public List<User> findAll() {
+        return userRepository.findAll();
     }
 
     @Transactional

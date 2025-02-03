@@ -6,12 +6,14 @@ import me.kimjaemin.springbootblog.config.error.exception.ArticleNotFoundExcepti
 import me.kimjaemin.springbootblog.config.error.exception.CommentNotFoundException;
 import me.kimjaemin.springbootblog.config.error.exception.UnauthorizedException;
 import me.kimjaemin.springbootblog.domain.Article;
+import me.kimjaemin.springbootblog.domain.Category;
 import me.kimjaemin.springbootblog.domain.Comment;
 import me.kimjaemin.springbootblog.domain.User;
 import me.kimjaemin.springbootblog.dto.AddArticleRequest;
 import me.kimjaemin.springbootblog.dto.AddCommentRequest;
 import me.kimjaemin.springbootblog.dto.UpdateArticleRequest;
 import me.kimjaemin.springbootblog.repository.ArticleRepository;
+import me.kimjaemin.springbootblog.repository.CategoryRepository;
 import me.kimjaemin.springbootblog.repository.CommentRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,19 +29,25 @@ public class BlogService {
 
     private final ArticleRepository articleRepository;
     private final CommentRepository commentRepository;
+    private final CategoryRepository categoryRepository;
+    private final CategoryService categoryService;
 
     public Article save(AddArticleRequest request, User author) {
-        return articleRepository.save(request.toEntity(author));
+        return articleRepository.save(request.toEntity(author, categoryService));
     }
 
-    public Specification<Article> search(String type, String keyword) {
+    public Specification<Article> search(String type, String keyword, String categoryName) {
         if (type.equals("title")) {
             return new Specification<Article>() {
                 private static final long serialVersionUID = 1L;
                 @Override
                 public Predicate toPredicate(Root<Article> a, CriteriaQuery<?> query, CriteriaBuilder cb) {
                     query.distinct(true);
-                    return cb.like(cb.lower(a.get("title")), "%" + keyword.toLowerCase() + "%");
+                    Predicate categoryPredicate = (categoryName != null) ?
+                            cb.equal(a.join("category", JoinType.INNER).get("name"), categoryName) : cb.conjunction();
+
+                    return cb.and(categoryPredicate,
+                            cb.like(cb.lower(a.get("title")), "%" + keyword.toLowerCase() + "%"));
                 }
             };
         } else if (type.equals("author")) {
@@ -48,8 +56,11 @@ public class BlogService {
                 @Override
                 public Predicate toPredicate(Root<Article> a, CriteriaQuery<?> query, CriteriaBuilder cb) {
                     query.distinct(true);
-                    Join<Article, User> userJoin = a.join("author", JoinType.LEFT);
-                    return cb.like(cb.lower(userJoin.get("nickname")), "%" + keyword.toLowerCase() + "%");
+                    Join<Article, User> userJoin = a.join("author", JoinType.INNER);
+                    Predicate categoryPredicate = (categoryName != null) ?
+                            cb.equal(a.join("category", JoinType.INNER).get("name"), categoryName) : cb.conjunction();
+                    return cb.and(categoryPredicate,
+                            cb.like(cb.lower(userJoin.get("nickname")), "%" + keyword.toLowerCase() + "%"));
                 }
             };
         }
@@ -58,15 +69,23 @@ public class BlogService {
             @Override
             public Predicate toPredicate(Root<Article> a, CriteriaQuery<?> query, CriteriaBuilder cb) {
                 query.distinct(true);
-                return cb.or(cb.like(cb.lower(a.get("title")), "%" + keyword.toLowerCase() + "%"),
-                        cb.like(cb.lower(a.get("content")), "%" + keyword.toLowerCase() + "%"));
+                Predicate categoryPredicate = (categoryName != null) ?
+                        cb.equal(a.join("category", JoinType.INNER).get("name"), categoryName) : cb.conjunction();
+                return cb.and(categoryPredicate,
+                        cb.or(cb.like(cb.lower(a.get("title")), "%" + keyword.toLowerCase() + "%"),
+                        cb.like(cb.lower(a.get("content")), "%" + keyword.toLowerCase() + "%")));
             }
         };
     }
 
-    public Page<Article> getPage(Pageable pageable, String type, String keyword) {
-        Specification<Article> specification = search(type, keyword);
-        return articleRepository.findAll(specification, pageable);
+    public Page<Article> getPage(Pageable pageable, String type, String keyword, String categoryName) {
+        if (!categoryRepository.existsByName(categoryName)) {
+            Specification<Article> specification = search(type, keyword, null);
+            return articleRepository.findAll(specification, pageable);
+        } else {
+            Specification<Article> specification = search(type, keyword, categoryName);
+            return articleRepository.findAll(specification, pageable);
+        }
     }
 
     public Article findById(long id) {
@@ -88,7 +107,8 @@ public class BlogService {
                 .orElseThrow(ArticleNotFoundException::new);
 
         authorizeArticleAuthor(article);
-        article.update(request.getTitle(), request.getContent());
+        article.update(categoryService.getCategoryByName(request.getCategoryName()),
+                request.getTitle(), request.getContent());
 
         return article;
     }
