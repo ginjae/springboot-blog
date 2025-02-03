@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AddUserRequest {
+
     @NotBlank(message = "이메일을 입력해 주세요.")
     @Email(message = "올바른 이메일 주소를 입력해 주세요.")
     private String email;
@@ -26,4 +27,5 @@ public class AddUserRequest {
     @NotBlank(message = "닉네임을 입력해 주세요.")
     @Size(min = 2, max = 15, message = "닉네임은 2-15자로 입력해 주세요.")
     private String nickname;
+
 }

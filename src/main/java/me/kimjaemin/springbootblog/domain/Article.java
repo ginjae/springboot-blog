@@ -10,6 +10,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Table(name = "articles")
@@ -50,6 +51,7 @@ public class Article {
         this.author = author;
         this.title = title;
         this.content = content;
+        this.comments = new ArrayList<>();
     }
 
     public void update(String title, String content) {

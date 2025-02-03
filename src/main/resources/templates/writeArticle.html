@@ -19,6 +19,12 @@
 <!--            <span class="h4 text-dark align-middle">'s 블로그</span>-->
         </a>
         <input type="hidden" id="csrf" th:value="${_csrf?.token}">
+        <div sec:authorize="isAuthenticated()">
+            <button type="button" class="btn btn-outline-primary m-1 rounded-pill"
+                    onclick="location.href='/userinfo'">회원정보</button>
+            <button type="button" class="btn btn-outline-primary m-1 rounded-pill"
+                    id="logout-btn">로그아웃</button>
+        </div>
     </div>
 </div>
 

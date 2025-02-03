@@ -14,7 +14,6 @@
             </a>
             <h2 class="my-4">회원가입</h2>
             <form>
-                <div class="alert alert-danger" th:each="err : ${#fields.allErrors()}" th:text="${err}"></div>
                 <input type="hidden" id="csrf" th:value="${_csrf?.token}">
                 <div class="mb-3">
                     <label for="email">이메일</label>

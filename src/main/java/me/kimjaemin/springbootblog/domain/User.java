@@ -40,7 +40,7 @@ public class User implements UserDetails {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
-        this.role = role != null ? role : "ROLE_USER";
+        this.role = (role != null && role.equals("ROLE_ADMIN")) ? role : "ROLE_USER";
     }
 
     @Override
@@ -76,6 +76,11 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public User update(String nickname) {
+        this.nickname = nickname;
+        return this;
     }
 
 }

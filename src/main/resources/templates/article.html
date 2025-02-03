@@ -20,13 +20,17 @@
         </a>
         <div>
             <button type="button" sec:authorize="isAnonymous()" class="btn btn-outline-primary m-1 rounded-pill"
-                    onclick="location.href='/login'">로그인</button>
-            <button type="button" sec:authorize="isAnonymous()" class="btn btn-outline-primary m-1 rounded-pill"
                     onclick="location.href='/signup'">회원가입</button>
+            <button type="button" sec:authorize="isAnonymous()" class="btn btn-outline-primary m-1 rounded-pill"
+                    onclick="location.href='/login'">로그인</button>
         </div>
         <input type="hidden" id="csrf" th:value="${_csrf?.token}">
-        <button type="button" sec:authorize="isAuthenticated()" class="btn btn-outline-primary m-1 rounded-pill"
-                id="logout-btn">로그아웃</button>
+        <div sec:authorize="isAuthenticated()">
+            <button type="button" class="btn btn-outline-primary m-1 rounded-pill"
+                    onclick="location.href='/userinfo'">회원정보</button>
+            <button type="button" class="btn btn-outline-primary m-1 rounded-pill"
+                    id="logout-btn">로그아웃</button>
+        </div>
     </div>
 </div>
 

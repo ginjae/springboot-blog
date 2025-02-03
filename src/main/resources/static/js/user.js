@@ -1,4 +1,4 @@
-import { httpRequest } from './http.js';
+import { httpRequest, changeParam } from './http.js';
 
 const signupButton = document.getElementById("signup-btn");
 if (signupButton) {
@@ -29,7 +29,10 @@ if (logoutButton) {
         let csrfToken = document.getElementById("csrf").value;
 
         function success() {
-            location.reload();
+            if (location.pathname.includes("/articles"))
+                location.reload();
+            else
+                location.href = "/articles";
         }
 
         function fail() {
@@ -37,4 +40,24 @@ if (logoutButton) {
 
         httpRequest("POST", "/logout", csrfToken, null, success, fail);
     });
+}
+
+const updateButton = document.getElementById("update-btn");
+if (updateButton) {
+    updateButton.addEventListener("click", (event) => {
+        let body = JSON.stringify({
+            nickname: document.getElementById("nickname").value,
+        });
+        let csrfToken = document.getElementById("csrf").value;
+
+        function success() {
+            alert("닉네임이 변경되었습니다.");
+            location.reload();
+        }
+
+        function fail() {
+        }
+
+        httpRequest("PUT", "/userinfo", csrfToken, body, success, fail);
+    })
 }
