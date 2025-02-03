@@ -20,6 +20,10 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
 
     public Category save(AddCategoryRequest addCategoryRequest) {
+        if (categoryRepository.existsByName(addCategoryRequest.getName())) {
+            throw new IllegalArgumentException("이미 등록된 카테고리입니다.");
+        }
+
         authorizeAdmin();
         return categoryRepository.save(addCategoryRequest.toEntity());
     }

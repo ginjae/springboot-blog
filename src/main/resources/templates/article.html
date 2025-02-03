@@ -44,7 +44,7 @@
         <input type="hidden" id="article-id" th:value="${article.id}">
 
         <header class="mb-2">
-            <h1 class="font-weight-bold mb-3" style="white-space:pre-wrap;word-break:break-all;overflow-wrap:break-word;" th:text="${article.title}"></h1>
+            <div class="h1 font-weight-bold mb-3" style="white-space:pre-wrap;word-break:break-all;" th:text="${article.title}"></div>
             <div class="d-flex align-items-center">
                 <span>
                     <a th:href="|/articles?category=${article.category}|" class="alert alert-secondary text-muted px-1 py-0"
