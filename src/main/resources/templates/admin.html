@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=768, user-scalable=yes">
+    <meta name="viewport" content="width=500, user-scalable=yes">
     <title>관리자 공간</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
     <style>
@@ -67,7 +67,7 @@
             <tr>
                 <th>#</th>
                 <th>카테고리 이름</th>
-                <th>글 개수</th>
+                <th>글</th>
                 <th>생성 날짜</th>
                 <th>항목 삭제</th>
             </tr>
@@ -85,10 +85,11 @@
                         <button class="category-update-btn btn btn-secondary btn-sm w-25 ml-2 px-0" th:data-name="${category.name}">수정</button>
                     </div>
                 </td>
-                <td th:text="${category.articleCount}"></td>
+                <td th:text="|${category.articleCount}개|"></td>
                 <td th:text="${#temporals.format(category.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
                 <td>
-                    <button th:data-name="${category.name}" class="category-delete-btn btn btn-secondary btn-sm btn-block px-0" style="height:38px;">삭제</button>
+                    <button th:data-name="${category.name}" class="category-delete-btn btn btn-secondary btn-sm btn-block px-0"
+                            style="height:38px;">삭제</button>
                 </td>
             </tr>
             </tbody>
