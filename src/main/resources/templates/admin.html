@@ -57,7 +57,7 @@
                     <td th:text="${#temporals.format(user.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
                     <td th:text="${user.role}"></td>
                     <td>
-                        <button th:data-email="${user.email}" class="user-admin-btn btn btn-secondary btn-sm btn-block" style="height:38px;">관리자</button>
+                        <button th:data-email="${user.email}" class="user-admin-btn btn btn-secondary btn-sm" style="width:fit-content;height:38px;">관리자</button>
                     </td>
                 </tr>
                 </tbody>
