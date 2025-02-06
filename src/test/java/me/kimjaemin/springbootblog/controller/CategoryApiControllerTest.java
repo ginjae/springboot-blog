@@ -75,7 +75,7 @@ class CategoryApiControllerTest {
     public void addCategory() throws Exception {
         final String url = "/api/categories";
         final String name = "category";
-        final AddCategoryRequest addCategoryRequest = new AddCategoryRequest(name);
+        final AddCategoryRequest addCategoryRequest = new AddCategoryRequest(name, "ROLE_USER");
         final String requestBody = objectMapper.writeValueAsString(addCategoryRequest);
 
         ResultActions result = mockMvc.perform(post(url)

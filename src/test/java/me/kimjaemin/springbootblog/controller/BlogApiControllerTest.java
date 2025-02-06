@@ -74,6 +74,7 @@ class BlogApiControllerTest {
         categoryRepository.deleteAll();
         category = Category.builder()
                 .name("all")
+                .allowedRole("ROLE_USER")
                 .build();
         categoryRepository.save(category);
     }
