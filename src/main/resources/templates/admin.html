@@ -24,6 +24,8 @@
         </a>
         <input type="hidden" id="csrf" th:value="${_csrf?.token}">
         <div sec:authorize="isAuthenticated()">
+            <button type="button" class="btn btn-outline-primary m-1 rounded-pill" sec:authorize="hasRole('ROLE_ADMIN')"
+                    onclick="location.href='/admin'">관리자 설정</button>
             <button type="button" class="btn btn-outline-primary m-1 rounded-pill"
                     onclick="location.href='/userinfo'">내 정보</button>
             <button type="button" class="btn btn-outline-primary m-1 rounded-pill"
@@ -33,76 +35,79 @@
 </div>
 
 <div class="container">
-    <details open>
-        <summary class="h3">사용자 정보</summary>
-        <table class="table table-bordered">
-            <thead>
-            <tr>
-                <th>#</th>
-                <th>닉네임</th>
-                <th>이메일</th>
-                <th>가입 날짜</th>
-                <th>권한</th>
-                <th>권한 부여</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="user, iterStat : ${users}">
-                <td th:text="${iterStat.count}"></td>
-                <td th:text="${user.nickname}"></td>
-                <td th:text="${user.email}"></td>
-                <td th:text="${#temporals.format(user.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
-                <td th:text="${user.role}"></td>
-                <td>
-                    <button th:data-email="${user.email}" class="user-admin-btn btn btn-secondary btn-sm btn-block" style="height:38px;">관리자</button>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </details>
-    <details open>
-        <summary class="h3">카테고리</summary>
-        <table class="table table-bordered">
-            <thead>
-            <tr>
-                <th>#</th>
-                <th>카테고리 이름</th>
-                <th>글</th>
-                <th>생성 날짜</th>
-                <th>항목 삭제</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="category, iterStat : ${categories}">
-                <td th:text="${iterStat.count}"></td>
-                <td>
-                    <div class="d-flex justify-content-start">
-                        <input class="category-update-form form-control w-50" th:value="${category.name}" aria-label="카테고리 이름 수정">
-                        <select class="form-control w-auto ml-2" aria-label="권한">
-                            <option th:selected="${#strings.equals(category.allowedRole, 'ROLE_ADMIN')}" value="ROLE_ADMIN">관리자</option>
-                            <option th:selected="${#strings.equals(category.allowedRole, 'ROLE_USER')}" value="ROLE_USER">사용자</option>
-                        </select>
-                        <button class="category-update-btn btn btn-secondary btn-sm w-25 ml-2 px-0" th:data-name="${category.name}">수정</button>
-                    </div>
-                </td>
-                <td th:text="|${category.articleCount}개|"></td>
-                <td th:text="${#temporals.format(category.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
-                <td>
-                    <button th:data-name="${category.name}" class="category-delete-btn btn btn-secondary btn-sm btn-block px-0"
-                            style="height:38px;">삭제</button>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-        <div class="d-flex justify-content-start">
-            <input class="form-control w-75" placeholder="카테고리 이름을 입력해 주세요." id="categoryName" aria-label="카테고리 이름 입력">
-            <select class="form-control w-auto ml-2" id="categoryAllowedRole" aria-label="권한">
-                <option value="ROLE_ADMIN">관리자</option>
-                <option value="ROLE_USER">사용자</option>
-            </select>
-            <button class="btn btn-primary ml-2 w-25" id="category-create-btn" style="height:38px;">추가</button>
-        </div>
-    </details>
+    <div class="mb-5">
+        <details open>
+            <summary class="h3">사용자 정보</summary>
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>닉네임</th>
+                    <th>이메일</th>
+                    <th>가입 날짜</th>
+                    <th>권한</th>
+                    <th>권한 부여</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="user, iterStat : ${users}">
+                    <td th:text="${iterStat.count}"></td>
+                    <td th:text="${user.nickname}"></td>
+                    <td th:text="${user.email}"></td>
+                    <td th:text="${#temporals.format(user.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                    <td th:text="${user.role}"></td>
+                    <td>
+                        <button th:data-email="${user.email}" class="user-admin-btn btn btn-secondary btn-sm btn-block" style="height:38px;">관리자</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </details>
+        <details open>
+            <summary class="h3">카테고리</summary>
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>카테고리 이름</th>
+                    <th>글</th>
+                    <th>생성 날짜</th>
+                    <th style="width:fit-content"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="category, iterStat : ${categories}">
+                    <td th:text="${iterStat.count}"></td>
+                    <td>
+                        <div class="d-flex justify-content-start">
+                            <input class="category-update-form form-control w-50" th:value="${category.name}" aria-label="카테고리 이름 수정">
+                            <select class="form-control w-auto ml-2" aria-label="권한">
+                                <option th:selected="${#strings.equals(category.allowedRole, 'ROLE_ADMIN')}" value="ROLE_ADMIN">관리자</option>
+                                <option th:selected="${#strings.equals(category.allowedRole, 'ROLE_USER')}" value="ROLE_USER">사용자</option>
+                            </select>
+                            <button class="category-update-btn btn btn-secondary btn-sm ml-2" th:data-name="${category.name}"
+                            style="width:fit-content;height:38px;">수정</button>
+                        </div>
+                    </td>
+                    <td th:text="${category.articleCount}"></td>
+                    <td th:text="${#temporals.format(category.createdAt, 'yyyy-MM-dd')}"></td>
+                    <td>
+                        <button th:data-name="${category.name}" class="category-delete-btn btn btn-secondary btn-sm"
+                                style="width:fit-content;height:38px;">삭제</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="d-flex justify-content-start">
+                <input class="form-control w-75" placeholder="카테고리 이름을 입력해 주세요." id="categoryName" aria-label="카테고리 이름 입력">
+                <select class="form-control w-auto ml-2" id="categoryAllowedRole" aria-label="권한">
+                    <option value="ROLE_ADMIN">관리자</option>
+                    <option value="ROLE_USER">사용자</option>
+                </select>
+                <button class="btn btn-primary ml-2" id="category-create-btn" style="width:fit-content;height:38px;">추가</button>
+            </div>
+        </details>
+    </div>
 </div>
 
 <script type="module" src="/js/user.js"></script>

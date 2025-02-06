@@ -21,6 +21,8 @@
         </a>
         <input type="hidden" id="csrf" th:value="${_csrf?.token}">
         <div sec:authorize="isAuthenticated()">
+            <button type="button" class="btn btn-outline-primary m-1 rounded-pill" sec:authorize="hasRole('ROLE_ADMIN')"
+                    onclick="location.href='/admin'">관리자 설정</button>
             <button type="button" class="btn btn-outline-primary m-1 rounded-pill"
                     onclick="location.href='/userinfo'">내 정보</button>
             <button type="button" class="btn btn-outline-primary m-1 rounded-pill"

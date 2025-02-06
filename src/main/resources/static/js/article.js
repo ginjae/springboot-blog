@@ -6,7 +6,7 @@ if (createButton) {
         let body = JSON.stringify({
             categoryName: document.getElementById("category").value,
             title: document.getElementById("title").value,
-            content: simpleMDE.value(),
+            content: editor.getMarkdown(),
         });
         let csrfToken = document.getElementById("csrf").value;
 
@@ -49,7 +49,7 @@ if (modifyButton) {
         let body = JSON.stringify({
             categoryName: document.getElementById("category").value,
             title: document.getElementById("title").value,
-            content: simpleMDE.value(),
+            content: editor.getMarkdown(),
         });
 
         function success() {
@@ -71,7 +71,7 @@ if (commentCreateButton) {
         let csrfToken = document.getElementById("csrf").value;
         let body = JSON.stringify({
             articleId: id,
-            content: document.getElementById("content").value,
+            content: document.getElementById("comment-content").value,
         });
 
         function success() {
