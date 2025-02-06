@@ -6,10 +6,12 @@ import me.kimjaemin.springbootblog.config.error.exception.UnauthorizedException;
 import me.kimjaemin.springbootblog.domain.Category;
 import me.kimjaemin.springbootblog.domain.User;
 import me.kimjaemin.springbootblog.dto.AddCategoryRequest;
+import me.kimjaemin.springbootblog.dto.UpdateCategoryRequest;
 import me.kimjaemin.springbootblog.repository.CategoryRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -43,6 +45,16 @@ public class CategoryService {
 
         authorizeAdmin();
         categoryRepository.delete(category);
+    }
+
+    @Transactional
+    public Category updateCategoryByName(String name, UpdateCategoryRequest updateCategoryRequest) {
+        Category category = categoryRepository.findByName(name)
+                .orElseThrow(CategoryNotFoundException::new);
+
+        authorizeAdmin();
+        category.update(updateCategoryRequest.getName(), updateCategoryRequest.getAllowedRole());
+        return category;
     }
 
     private static void authorizeAdmin() {

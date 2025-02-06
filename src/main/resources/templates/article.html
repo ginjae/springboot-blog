@@ -4,12 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=768, user-scalable=yes">
     <title th:text="${error == null} ? ${article.title} : '존재하지 않는 글'"></title>
-    <link rel="icon" href="/favicon.ico">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
     <style>
         span::after {
             content: " ";
             margin: 0 6px;
+        }
+        .textbox {
+            img {
+                max-width: 100%;
+            }
         }
     </style>
 </head>
@@ -57,10 +61,10 @@
             <hr>
         </header>
         <section class="mb-4">
-            <div class="w-100" style="white-space:normal;word-break:break-word;" th:utext="${@commonUtil.markdownToHtml(article.content)}"></div>
+            <div class="textbox" style="white-space:normal;word-break:break-word;" th:utext="${@commonUtil.markdownToHtml(article.content)}"></div>
         </section>
         <div class="d-flex justify-content-end">
-            <button type="button" sec:authorize="isAuthenticated()" th:onclick="|location.href='/write-article?id=' + ${article.id}|"
+            <button type="button" sec:authorize="isAuthenticated()" th:onclick="|location.href='/write-article?id=' + '${article.id}'|"
                     class="btn btn-primary btn-sm mr-1 rounded-pill">수정</button>
             <button type="button" sec:authorize="isAuthenticated()" id="delete-btn"
                     class="btn btn-secondary btn-sm rounded-pill">삭제</button>

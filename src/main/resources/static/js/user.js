@@ -61,3 +61,21 @@ if (updateButton) {
         httpRequest("PUT", "/userinfo", csrfToken, body, success, fail);
     })
 }
+
+const userAdminButton = document.querySelectorAll(".user-admin-btn");
+userAdminButton.forEach((button) => {
+    button.addEventListener("click", function() {
+        let email = this.getAttribute("data-email");
+        let csrfToken = document.getElementById("csrf").value;
+
+        function success() {
+            alert("관리자 권한이 부여되었습니다.");
+            location.reload();
+        }
+
+        function fail() {
+        }
+
+        httpRequest("PUT", "/userinfo/" + email, csrfToken, null, success, fail);
+    });
+});

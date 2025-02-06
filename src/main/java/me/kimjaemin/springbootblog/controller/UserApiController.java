@@ -49,4 +49,11 @@ public class UserApiController {
                 .body(new UserResponse(updatedUser));
     }
 
+    @PutMapping("/userinfo/{email}")
+    public ResponseEntity<UserResponse> toAdmin(@PathVariable String email) {
+        User admin = userService.toAdmin(email);
+
+        return ResponseEntity.ok()
+                .body(new UserResponse(admin));
+    }
 }

@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=768, user-scalable=yes">
-    <title>ginjae의 공간</title>
-    <link rel="icon" href="/favicon.ico">
+    <title>스프링부트 블로그</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
     <style>
         .card {
@@ -68,13 +67,14 @@
                th:href="|/articles?category=${category.name}|" th:text="${category.name}"></a>
         </li>
     </ul>
-    <button type="button" onclick="location.href='/write-article'" class="btn btn-primary btn-lg shadow"
-            style="position:fixed;bottom:20px;right:20px;z-index:100;border-radius:50%;width:60px;height:60px;">&#x270F;</button>
+<!--    <button type="button" onclick="location.href='/write-article'" class="btn btn-primary btn-lg shadow"-->
+<!--            style="position:fixed;bottom:20px;right:20px;z-index:100;border-radius:50%;width:80px;height:80px;">새 글</button>-->
     <div class="d-flex justify-content-between mb-3">
         <select class="form-control w-auto rounded-pill" th:onchange="|changeParam('sort', value)|" aria-label="정렬">
             <option th:selected="${#strings.equals(param.sort, 'id,desc')}" value="id,desc">최신 순</option>
             <option th:selected="${#strings.equals(param.sort, 'id,asc')}" value="id,asc">작성 순</option>
         </select>
+        <button type="button" onclick="redirectToWriteArticle()" class="btn btn-primary rounded-pill">글쓰기</button>
     </div>
 
     <div th:each="article : ${page}">
@@ -129,10 +129,10 @@
             <option th:selected="${#strings.equals(param.type, 'content')}" value="content">제목+본문</option>
             <option th:selected="${#strings.equals(param.type, 'author')}" value="author">작성자</option>
         </select>
-        <div class="form-control rounded-pill d-flex justify-content-between align-items-center pl-3 pr-0" style="width:200px;height:38px;">
-            <input style="background-color:transparent;width:136px;border:0;outline:0;" type="search" placeholder="검색"
-                   id="keyword" name="keyword" th:value="${param.keyword}" maxlength="50" required>
-            <button class="btn rounded-pill shadow-none" type="submit">&#128269;</button>
+        <div class="form-control rounded-pill d-flex justify-content-between align-items-center pl-3 pr-0" style="width:270px;height:38px;">
+            <input style="background-color:transparent;width:200px;border:0;outline:0;" type="search" placeholder="검색어를 입력해주세요."
+                   id="keyword" name="keyword" th:value="${param.keyword}" maxlength="50">
+            <button class="btn btn-sm btn-primary" type="submit" style="border-bottom-right-radius:50rem;border-top-right-radius:50rem;height:inherit;">검색</button>
         </div>
     </form>
 
@@ -140,6 +140,11 @@
 
 <script type="module" src="/js/user.js"></script>
 <script>
+    function redirectToWriteArticle(button) {
+        const url = new URL(window.location.href);
+        const category = url.searchParams.get("category")
+        window.location.href = "/write-article" + (category ? "?category=" + category : '');
+    }
     function changeParam(key, value) {
         const url = new URL(window.location.href);
         if (key === "sort")

@@ -25,11 +25,6 @@ public class BlogViewController {
     private final BlogService blogService;
     private final CategoryService categoryService;
 
-    @GetMapping("/")
-    public String root() {
-        return "redirect:/articles";
-    }
-
     @GetMapping("/articles")
     public String getArticles(@PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
                               @RequestParam(value = "type", defaultValue = "") String type,

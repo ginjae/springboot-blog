@@ -33,7 +33,11 @@ public class BlogService {
     private final CategoryService categoryService;
 
     public Article save(AddArticleRequest request, User author) {
-        return articleRepository.save(request.toEntity(author, categoryService));
+        Article article = request.toEntity(author, categoryService);
+        if (article.getCategory().getAllowedRole().equals("ROLE_ADMIN")) {
+            authorizeAdmin();
+        }
+        return articleRepository.save(article);
     }
 
     public Specification<Article> search(String type, String keyword, String categoryName) {
@@ -105,12 +109,22 @@ public class BlogService {
     public Article update (long id, UpdateArticleRequest request) {
         Article article = articleRepository.findById(id)
                 .orElseThrow(ArticleNotFoundException::new);
+        Category category = categoryService.getCategoryByName(request.getCategoryName());
+        if (category.getAllowedRole().equals("ROLE_ADMIN")) {
+            authorizeAdmin();
+        }
 
         authorizeArticleAuthor(article);
-        article.update(categoryService.getCategoryByName(request.getCategoryName()),
-                request.getTitle(), request.getContent());
+        article.update(category, request.getTitle(), request.getContent());
 
         return article;
+    }
+
+    private static void authorizeAdmin() {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (!user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
+            throw new UnauthorizedException();
+        }
     }
 
     private static void authorizeArticleAuthor(Article article) {

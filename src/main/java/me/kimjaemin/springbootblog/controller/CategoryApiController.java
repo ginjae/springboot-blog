@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import me.kimjaemin.springbootblog.domain.Category;
 import me.kimjaemin.springbootblog.dto.AddCategoryRequest;
 import me.kimjaemin.springbootblog.dto.CategoryResponse;
+import me.kimjaemin.springbootblog.dto.UpdateCategoryRequest;
 import me.kimjaemin.springbootblog.service.CategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,15 @@ public class CategoryApiController {
 
         return ResponseEntity.ok()
                 .build();
+    }
+
+    @PutMapping("/api/categories/{name}")
+    public ResponseEntity<CategoryResponse> updateCategory(@PathVariable("name") String name,
+                                                           @RequestBody @Validated UpdateCategoryRequest updateCategoryRequest) {
+        Category updatedCategory = categoryService.updateCategoryByName(name, updateCategoryRequest);
+
+        return ResponseEntity.ok()
+                .body(new CategoryResponse(updatedCategory));
     }
 
 }

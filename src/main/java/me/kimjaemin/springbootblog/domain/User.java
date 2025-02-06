@@ -48,7 +48,11 @@ public class User implements UserDetails {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
-        this.role = (role != null && role.equals("ROLE_ADMIN")) ? role : "ROLE_USER";
+        if (role != null && role.equals("ROLE_ADMIN")) {
+            this.role = "ROLE_ADMIN";
+        } else {
+            this.role = "ROLE_USER";
+        }
     }
 
     @Override
@@ -88,6 +92,11 @@ public class User implements UserDetails {
 
     public User update(String nickname) {
         this.nickname = nickname;
+        return this;
+    }
+
+    public User toAdmin() {
+        this.role = "ROLE_ADMIN";
         return this;
     }
 

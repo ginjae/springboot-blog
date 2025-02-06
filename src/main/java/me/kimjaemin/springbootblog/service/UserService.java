@@ -1,10 +1,14 @@
 package me.kimjaemin.springbootblog.service;
 
 import lombok.RequiredArgsConstructor;
+import me.kimjaemin.springbootblog.config.error.exception.UnauthorizedException;
 import me.kimjaemin.springbootblog.domain.User;
 import me.kimjaemin.springbootblog.dto.AddUserRequest;
 import me.kimjaemin.springbootblog.dto.UpdateUserRequest;
 import me.kimjaemin.springbootblog.repository.UserRepository;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,6 +51,19 @@ public class UserService {
         }
 
         user.update(updateUserRequest.getNickname());
+
+        return userRepository.save(user);
+    }
+
+    @Transactional
+    public User toAdmin(String email) {
+        User admin = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (!admin.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
+            throw new UnauthorizedException();
+        }
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+        user.toAdmin();
 
         return userRepository.save(user);
     }
