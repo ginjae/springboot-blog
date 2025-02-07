@@ -33,21 +33,40 @@
 
 <div class="container d-flex justify-content-center">
     <div class="w-50 mb-5">
-        <h3>계정 정보 변경</h3>
-        <hr>
-        <div class="mb-3">
-            <label for="created-at">가입 날짜</label>
-            <input class="form-control-plaintext" id="created-at" type="text" th:value="${#temporals.format(user.createdAt, 'yyyy-MM-dd')}" readonly>
+        <div class="mb-5">
+            <h3>계정 정보 변경</h3>
+            <hr>
+            <div class="mb-3">
+                <label for="created-at">가입 날짜</label>
+                <input class="form-control-plaintext" id="created-at" type="text" th:value="${#temporals.format(user.createdAt, 'yyyy-MM-dd')}" readonly>
+            </div>
+            <div class="mb-3">
+                <label for="email">이메일</label>
+                <input class="form-control-plaintext" id="email" type="email" th:value="${user.email}" readonly>
+            </div>
+            <div class="mb-3">
+                <label for="nickname">닉네임</label>
+                <input class="form-control" id="nickname" type="text" th:value="${user.nickname}" maxlength="8">
+            </div>
+            <button id="update-user-btn" class="btn btn-primary btn-block rounded-pill">수정</button>
         </div>
-        <div class="mb-3">
-            <label for="email">이메일</label>
-            <input class="form-control-plaintext" id="email" type="email" th:value="${user.email}" readonly>
+        <div>
+            <h3>비밀번호 변경</h3>
+            <hr>
+            <div class="mb-3">
+                <label for="current-password">기존 비밀번호</label>
+                <input class="form-control" id="current-password" type="password" maxlength="64" data-eye>
+            </div>
+            <div class="mb-3">
+                <label for="password1">새 비밀번호</label>
+                <input class="form-control" id="password1" type="password" maxlength="64" data-eye>
+            </div>
+            <div class="mb-3">
+                <label for="password2">새 비밀번호 확인</label>
+                <input class="form-control" id="password2" type="password" maxlength="64" data-eye>
+            </div>
+            <button id="update-password-btn" class="btn btn-primary btn-block rounded-pill">변경</button>
         </div>
-        <div class="mb-3">
-            <label for="nickname">닉네임</label>
-            <input class="form-control" id="nickname" type="text" th:value="${user.nickname}" maxlength="8">
-        </div>
-        <button id="update-btn" class="btn btn-primary btn-block rounded-pill">수정</button>
     </div>
 </div>
 

@@ -42,16 +42,16 @@ if (logoutButton) {
     });
 }
 
-const updateButton = document.getElementById("update-btn");
-if (updateButton) {
-    updateButton.addEventListener("click", (event) => {
+const updateUserButton = document.getElementById("update-user-btn");
+if (updateUserButton) {
+    updateUserButton.addEventListener("click", (event) => {
         let body = JSON.stringify({
             nickname: document.getElementById("nickname").value,
         });
         let csrfToken = document.getElementById("csrf").value;
 
         function success() {
-            alert("닉네임이 변경되었습니다.");
+            alert("계정 정보가 변경되었습니다.");
             location.reload();
         }
 
@@ -79,3 +79,25 @@ userAdminButton.forEach((button) => {
         httpRequest("PUT", "/userinfo/" + email, csrfToken, null, success, fail);
     });
 });
+
+const updatePasswordButton = document.getElementById("update-password-btn");
+if (updatePasswordButton) {
+    updatePasswordButton.addEventListener("click", (event) => {
+        let body = JSON.stringify({
+            currentPassword: document.getElementById("current-password").value,
+            password1: document.getElementById("password1").value,
+            password2: document.getElementById("password2").value,
+        });
+        let csrfToken = document.getElementById("csrf").value;
+
+        function success() {
+            alert("비밀번호가 변경되었습니다.");
+            location.reload();
+        }
+
+        function fail() {
+        }
+
+        httpRequest("PUT", "/userinfo/password", csrfToken, body, success, fail);
+    })
+}

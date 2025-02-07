@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import me.kimjaemin.springbootblog.domain.User;
 import me.kimjaemin.springbootblog.dto.AddUserRequest;
 import me.kimjaemin.springbootblog.dto.UpdateUserRequest;
+import me.kimjaemin.springbootblog.dto.UpdatePasswordRequest;
 import me.kimjaemin.springbootblog.dto.UserResponse;
 import me.kimjaemin.springbootblog.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -55,5 +56,14 @@ public class UserApiController {
 
         return ResponseEntity.ok()
                 .body(new UserResponse(admin));
+    }
+
+    @PutMapping("/userinfo/password")
+    public ResponseEntity<UserResponse> updatePassword(@RequestBody @Validated UpdatePasswordRequest updatePasswordRequest,
+                                                       @AuthenticationPrincipal User user) {
+        User updatedUser = userService.updatePassword(updatePasswordRequest, user);
+
+        return ResponseEntity.ok()
+                .body(new UserResponse(updatedUser));
     }
 }

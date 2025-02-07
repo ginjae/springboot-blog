@@ -5,11 +5,13 @@ import me.kimjaemin.springbootblog.config.error.exception.UnauthorizedException;
 import me.kimjaemin.springbootblog.domain.User;
 import me.kimjaemin.springbootblog.dto.AddUserRequest;
 import me.kimjaemin.springbootblog.dto.UpdateUserRequest;
+import me.kimjaemin.springbootblog.dto.UpdatePasswordRequest;
 import me.kimjaemin.springbootblog.repository.UserRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +23,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     public User save(AddUserRequest addUserRequest) {
         if (!addUserRequest.getPassword1().equals(addUserRequest.getPassword2())) {
@@ -64,6 +67,19 @@ public class UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
         user.toAdmin();
+
+        return userRepository.save(user);
+    }
+
+    @Transactional
+    public User updatePassword(UpdatePasswordRequest updateUserRequest, User user) {
+        if (!passwordEncoder.matches(updateUserRequest.getCurrentPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+        if (!updateUserRequest.getPassword1().equals(updateUserRequest.getPassword2())) {
+            throw new IllegalArgumentException("새 비밀번호가 일치하지 않습니다.");
+        }
+        user.updatePassword(passwordEncoder.encode(updateUserRequest.getPassword1()));
 
         return userRepository.save(user);
     }
